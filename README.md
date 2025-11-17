@@ -225,6 +225,11 @@ nginx --> client: 200 OK
 
 ### 📊 Deployment Architecture (PlantUML)
 
+![Deployment Diagram](uml/deployment_diagram.png)
+
+<details>
+<summary>PlantUML Source Code</summary>
+
 ```plantuml
 @startuml Docker Deployment Architecture
 
@@ -322,6 +327,8 @@ end note
 
 @enduml
 ```
+
+</details>
 
 ### 🎯 Architecture Design Principles
 
