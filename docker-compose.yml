@@ -10,6 +10,8 @@ services:
     ports:
       # - "8080:80"  # 本機 8080 對應到容器 80
       - "18723:80"  # 改用冷門端口避免衝突
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -30,6 +32,7 @@ services:
     # command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2  # 原始設定
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 6    # 提升 workers 數量
     environment:
+      - TZ=Asia/Taipei
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=loguser
@@ -53,6 +56,7 @@ services:
     # command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2  # 原始設定
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 6    # 提升 workers 數量
     environment:
+      - TZ=Asia/Taipei
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=loguser
@@ -78,6 +82,7 @@ services:
     container_name: log-worker
     command: python worker.py
     environment:
+      - TZ=Asia/Taipei
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=loguser
@@ -102,12 +107,14 @@ services:
     ports:
       # - "6379:6379"
       - "16891:6379"  # 改用冷門端口避免衝突
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - redis-data:/data
     command: >
-      redis-server 
-      --appendonly yes 
-      --maxmemory 512mb 
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
       --maxmemory-policy allkeys-lru
     networks:
       - log-network
@@ -128,6 +135,7 @@ services:
       # - "5432:5432"
       - "15467:5432"  # 改用冷門端口避免衝突
     environment:
+      - TZ=Asia/Taipei
       - POSTGRES_USER=loguser
       - POSTGRES_PASSWORD=logpass
       - POSTGRES_DB=logsdb

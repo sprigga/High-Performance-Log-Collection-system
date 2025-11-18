@@ -11,6 +11,8 @@ services:
     container_name: log-prometheus
     ports:
       - "9090:9090"
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
@@ -34,6 +36,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - TZ=Asia/Taipei
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin123
       - GF_USERS_ALLOW_SIGN_UP=false
@@ -55,6 +58,8 @@ services:
     container_name: log-alertmanager
     ports:
       - "9093:9093"
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
@@ -74,6 +79,7 @@ services:
     ports:
       - "9121:9121"
     environment:
+      - TZ=Asia/Taipei
       - REDIS_ADDR=redis:6379
     depends_on:
       - redis
@@ -90,6 +96,7 @@ services:
     ports:
       - "9187:9187"
     environment:
+      - TZ=Asia/Taipei
       - DATA_SOURCE_NAME=postgresql://loguser:logpass@postgres:5432/logsdb?sslmode=disable
     depends_on:
       - postgres
@@ -105,6 +112,8 @@ services:
     container_name: log-node-exporter
     ports:
       - "9100:9100"
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -127,6 +136,8 @@ services:
     ports:
       # 原本使用 8080:8080，改用冷門 port 避免衝突
       - "18888:8080"
+    environment:
+      - TZ=Asia/Taipei
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
