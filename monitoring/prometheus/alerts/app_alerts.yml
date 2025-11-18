@@ -1,0 +1,74 @@
+# prometheus/alerts/app_alerts.yml
+groups:
+  - name: app_alerts
+    interval: 30s
+    rules:
+      # API 回應時間告警
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API 回應時間過高"
+          description: "P95 回應時間 {{ $value }}s 超過 500ms"
+
+      # 錯誤率告警
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "錯誤率過高"
+          description: "錯誤率 {{ $value | humanizePercentage }} 超過 5%"
+
+      # Redis Stream 堆積告警
+      - alert: RedisStreamBacklog
+        expr: redis_stream_size > 50000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis Stream 訊息堆積"
+          description: "Stream 大小 {{ $value }} 超過 50000"
+
+      # 系統 CPU 告警
+      - alert: HighCPUUsage
+        expr: system_cpu_usage_percent > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "系統 CPU 使用率過高"
+          description: "CPU 使用率 {{ $value }}% 超過 80%"
+
+      # 系統記憶體告警
+      - alert: HighMemoryUsage
+        expr: (system_memory_usage_bytes{type='used'} / system_memory_usage_bytes{type='total'}) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "系統記憶體使用率過高"
+          description: "記憶體使用率 {{ $value }}% 超過 85%"
+
+      # 服務停機告警
+      - alert: ServiceDown
+        expr: up{job=~"fastapi|redis|postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "服務停機"
+          description: "{{ $labels.job }} 服務已停機"
+
+      # Redis 快取命中率低
+      - alert: LowCacheHitRate
+        expr: rate(redis_cache_hits_total[5m]) / (rate(redis_cache_hits_total[5m]) + rate(redis_cache_misses_total[5m])) < 0.5
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis 快取命中率過低"
+          description: "快取命中率 {{ $value | humanizePercentage }} 低於 50%"

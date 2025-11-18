@@ -1,0 +1,152 @@
+# docker-compose.monitoring.yml
+# 監控服務配置 - 與主要 docker-compose.yml 一起使用
+# 使用方式: docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up -d
+
+services:
+  # ==========================================
+  # Prometheus 時序資料庫
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: log-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # Grafana 可視化儀表板
+  # ==========================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: log-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # AlertManager 告警管理
+  # ==========================================
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: log-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # Redis Exporter
+  # ==========================================
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: log-redis-exporter
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # PostgreSQL Exporter
+  # ==========================================
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: log-postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_NAME=postgresql://loguser:logpass@postgres:5432/logsdb?sslmode=disable
+    depends_on:
+      - postgres
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # Node Exporter (系統資源監控)
+  # ==========================================
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: log-node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
+  # cAdvisor (容器監控)
+  # ==========================================
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: log-cadvisor
+    ports:
+      # 原本使用 8080:8080，改用冷門 port 避免衝突
+      - "18888:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - log-network
+    restart: unless-stopped
+
+# ==========================================
+# 資料持久化
+# ==========================================
+volumes:
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  alertmanager_data:
+    driver: local

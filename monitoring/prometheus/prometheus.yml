@@ -1,0 +1,54 @@
+# prometheus.yml
+global:
+  scrape_interval: 15s      # 每 15 秒抓取一次指標
+  evaluation_interval: 15s   # 每 15 秒評估一次告警規則
+
+  external_labels:
+    cluster: 'log-collection-system'
+    environment: 'production'
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# 告警規則文件
+rule_files:
+  - "alerts/*.yml"
+
+# 抓取配置
+scrape_configs:
+  # FastAPI 應用程式監控
+  - job_name: 'fastapi'
+    static_configs:
+      - targets:
+        - 'log-fastapi-1:8000'
+        - 'log-fastapi-2:8000'
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # Redis 監控
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 10s
+
+  # PostgreSQL 監控
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 10s
+
+  # Node Exporter (系統資源監控)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 10s
+
+  # cAdvisor (容器監控)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 10s

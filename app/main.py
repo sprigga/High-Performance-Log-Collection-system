@@ -3,9 +3,11 @@ FastAPI 主應用程式
 """
 import os
 import json
+import time
+import asyncio
 from datetime import datetime
 from typing import Optional
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, text
@@ -18,6 +20,22 @@ from models import (
     BatchLogEntryRequest, BatchLogEntryResponse  # 新增批量模型
 )
 
+# 匯入 Prometheus 指標模組
+from metrics import (
+    MetricsMiddleware,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+    logs_received_total,
+    redis_stream_messages_total,
+    redis_cache_hits_total,
+    redis_cache_misses_total,
+    redis_operation_duration_seconds,
+    redis_stream_size,
+    update_system_metrics,
+    batch_processing_duration_seconds,
+    logs_processing_errors_total
+)
+
 # ==========================================
 # 應用程式初始化
 # ==========================================
@@ -26,6 +44,9 @@ app = FastAPI(
     description="基於 FastAPI + Redis + PostgreSQL 的日誌收集系統",
     version="1.0.0"
 )
+
+# 加入 Prometheus Metrics 中間件
+app.add_middleware(MetricsMiddleware)
 
 # 實例名稱（用於識別不同的 FastAPI 實例）
 INSTANCE_NAME = os.getenv('INSTANCE_NAME', 'fastapi-unknown')
@@ -40,15 +61,29 @@ redis_client: Optional[redis.Redis] = None
 # ==========================================
 # 應用程式生命週期
 # ==========================================
+async def update_metrics_task():
+    """背景任務：定期更新系統指標"""
+    while True:
+        try:
+            update_system_metrics()
+            # 更新 Redis Stream 大小
+            if redis_client:
+                stream_len = await redis_client.xlen('logs:stream')
+                redis_stream_size.set(stream_len)
+        except Exception as e:
+            print(f"更新指標失敗: {e}")
+        await asyncio.sleep(15)  # 每 15 秒更新一次
+
+
 @app.on_event("startup")
 async def startup_event():
     """
     應用程式啟動時執行
     """
     global redis_client
-    
+
     print(f"🚀 啟動 FastAPI 實例: {INSTANCE_NAME}")
-    
+
     # 建立 Redis 連線（使用連線池）
     pool = redis.ConnectionPool(
         host=REDIS_HOST,
@@ -58,20 +93,20 @@ async def startup_event():
         max_connections=200   # 提升連線池以支援更高並發
     )
     redis_client = redis.Redis(connection_pool=pool)
-    
+
     # 測試 Redis 連線
     try:
         await redis_client.ping()
         print("✅ Redis 連線成功")
     except Exception as e:
         print(f"❌ Redis 連線失敗: {e}")
-    
+
     # 測試資料庫連線
     if await test_db_connection():
         print("✅ PostgreSQL 連線成功")
     else:
         print("❌ PostgreSQL 連線失敗")
-    
+
     # 確保 Redis Stream 消費者群組存在
     try:
         await redis_client.xgroup_create(
@@ -86,6 +121,10 @@ async def startup_event():
             print("ℹ️ Redis Stream 群組已存在")
         else:
             print(f"❌ Redis Stream 群組建立失敗: {e}")
+
+    # 啟動背景任務：定期更新系統指標
+    asyncio.create_task(update_metrics_task())
+    print("✅ 系統指標監控已啟動")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -148,14 +187,20 @@ async def health_check():
 async def create_log(log: LogEntryRequest):
     """
     接收日誌並快速寫入 Redis Stream
-    
+
     流程：
     1. 驗證日誌格式
     2. 寫入 Redis Stream
     3. 立即返回（非同步處理）
-    
+
     預期回應時間：< 5ms
     """
+    # 記錄業務指標
+    logs_received_total.labels(
+        device_id=log.device_id,
+        log_level=log.log_level
+    ).inc()
+
     try:
         # 準備日誌資料
         log_dict = {
@@ -165,7 +210,10 @@ async def create_log(log: LogEntryRequest):
             "log_data": json.dumps(log.log_data) if log.log_data else "{}",
             "timestamp": datetime.now().isoformat()
         }
-        
+
+        # 追蹤 Redis 操作時間
+        start_time = time.time()
+
         # 寫入 Redis Stream（設定最大長度避免記憶體溢出）
         message_id = await redis_client.xadd(
             name="logs:stream",
@@ -173,14 +221,23 @@ async def create_log(log: LogEntryRequest):
             maxlen=100000,  # 保留最近 10 萬筆
             approximate=True  # 使用近似值提升效能
         )
-        
+
+        # 記錄成功
+        redis_stream_messages_total.labels(status='success').inc()
+
+        # 記錄操作時間
+        duration = time.time() - start_time
+        redis_operation_duration_seconds.labels(operation='xadd').observe(duration)
+
         return LogEntryResponse(
             status="queued",
             message_id=message_id,
             received_at=datetime.now()
         )
-        
+
     except Exception as e:
+        redis_stream_messages_total.labels(status='failed').inc()
+        logs_processing_errors_total.labels(error_type='redis_write').inc()
         print(f"寫入 Redis Stream 失敗: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to queue log: {str(e)}")
 
@@ -199,6 +256,9 @@ async def create_batch_logs(batch: BatchLogEntryRequest):
 
     預期效能：可處理 10,000+ logs/秒
     """
+    batch_size = len(batch.logs)
+    start_time = time.time()
+
     try:
         message_ids = []
         current_time = datetime.now().isoformat()
@@ -207,6 +267,12 @@ async def create_batch_logs(batch: BatchLogEntryRequest):
         pipe = redis_client.pipeline()
 
         for log in batch.logs:
+            # 記錄業務指標
+            logs_received_total.labels(
+                device_id=log.device_id,
+                log_level=log.log_level
+            ).inc()
+
             log_dict = {
                 "device_id": log.device_id,
                 "log_level": log.log_level,
@@ -225,14 +291,23 @@ async def create_batch_logs(batch: BatchLogEntryRequest):
         results = await pipe.execute()
         message_ids = [str(r) for r in results]
 
+        # 記錄成功
+        redis_stream_messages_total.labels(status='success').inc()
+
+        # 記錄批量處理時間
+        duration = time.time() - start_time
+        batch_processing_duration_seconds.labels(batch_size=str(batch_size)).observe(duration)
+
         return BatchLogEntryResponse(
             status="queued",
-            count=len(batch.logs),
+            count=batch_size,
             message_ids=message_ids,
             received_at=datetime.now()
         )
 
     except Exception as e:
+        redis_stream_messages_total.labels(status='failed').inc()
+        logs_processing_errors_total.labels(error_type='batch_redis_write').inc()
         print(f"批量寫入 Redis Stream 失敗: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to queue batch logs: {str(e)}")
 
@@ -261,14 +336,21 @@ async def get_logs(
     
     # 1. 檢查 Redis 快取
     try:
+        start_time = time.time()
         cached_data = await redis_client.get(cache_key)
+        duration = time.time() - start_time
+        redis_operation_duration_seconds.labels(operation='get').observe(duration)
+
         if cached_data:
+            redis_cache_hits_total.inc()
             logs_data = json.loads(cached_data)
             return BatchLogQueryResponse(
                 total=len(logs_data),
                 source="cache",
                 data=[LogQueryResponse(**log) for log in logs_data]
             )
+        else:
+            redis_cache_misses_total.inc()
     except Exception as e:
         print(f"Redis 快取讀取失敗: {e}")
     
@@ -299,11 +381,14 @@ async def get_logs(
         
         # 3. 寫入快取（TTL 5分鐘）
         try:
+            start_time = time.time()
             await redis_client.setex(
                 name=cache_key,
                 time=300,  # 5分鐘
                 value=json.dumps(logs_data, default=str)
             )
+            duration = time.time() - start_time
+            redis_operation_duration_seconds.labels(operation='set').observe(duration)
         except Exception as e:
             print(f"Redis 快取寫入失敗: {e}")
         
@@ -396,6 +481,15 @@ async def get_stats(db: AsyncSession = Depends(get_async_db)):
 # ==========================================
 # API 端點 - 根路徑
 # ==========================================
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics 端點"""
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST
+    )
+
+
 @app.get("/")
 async def root():
     """
@@ -410,6 +504,7 @@ async def root():
             "create_log": "POST /api/log",
             "get_logs": "GET /api/logs/{device_id}",
             "stats": "GET /api/stats",
+            "metrics": "/metrics",
             "docs": "/docs"
         }
     }
