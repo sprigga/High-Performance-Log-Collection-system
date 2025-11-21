@@ -17,7 +17,7 @@
         "x": 0,
         "y": 0,
         "w": 12,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -78,7 +78,7 @@
         "x": 12,
         "y": 0,
         "w": 12,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -137,9 +137,9 @@
       "type": "graph",
       "gridPos": {
         "x": 0,
-        "y": 8,
+        "y": 9,
         "w": 8,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -190,9 +190,9 @@
       "type": "graph",
       "gridPos": {
         "x": 8,
-        "y": 8,
+        "y": 9,
         "w": 8,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -246,9 +246,9 @@
       "type": "graph",
       "gridPos": {
         "x": 16,
-        "y": 8,
+        "y": 9,
         "w": 8,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -292,70 +292,14 @@
       "nullPointMode": "connected"
     },
     {
-      "id": 6,
-      "title": "系統磁碟使用",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 16,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "system_disk_usage_bytes{type='used'}",
-          "legendFormat": "已使用",
-          "refId": "A"
-        },
-        {
-          "expr": "system_disk_usage_bytes{type='free'}",
-          "legendFormat": "可用",
-          "refId": "B"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "磁碟空間 (Bytes)",
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
       "id": 8,
       "title": "PostgreSQL 查詢時間",
       "type": "graph",
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 18,
         "w": 12,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -404,9 +348,9 @@
       "type": "graph",
       "gridPos": {
         "x": 12,
-        "y": 24,
+        "y": 18,
         "w": 12,
-        "h": 8
+        "h": 9
       },
       "targets": [
         {
@@ -455,9 +399,9 @@
       "type": "graph",
       "gridPos": {
         "x": 0,
-        "y": 32,
-        "w": 8,
-        "h": 8
+        "y": 27,
+        "w": 24,
+        "h": 9
       },
       "targets": [
         {
@@ -504,110 +448,6 @@
         "show": true,
         "values": true,
         "min": true,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 11,
-      "title": "PostgreSQL 資料庫大小",
-      "type": "graph",
-      "gridPos": {
-        "x": 8,
-        "y": 32,
-        "w": 8,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "pg_database_size_bytes{datname=\"logsdb\"}",
-          "legendFormat": "資料庫大小",
-          "refId": "A"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "資料大小 (Bytes)",
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": true,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 12,
-      "title": "錯誤統計",
-      "type": "graph",
-      "gridPos": {
-        "x": 16,
-        "y": 32,
-        "w": 8,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "sum(rate(logs_processing_errors_total[1m])) by (error_type)",
-          "legendFormat": "{{error_type}}",
-          "refId": "A"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "錯誤/秒 (筆)",
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
         "max": true,
         "current": true,
         "total": false,

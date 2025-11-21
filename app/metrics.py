@@ -1,69 +1,106 @@
 # metrics.py
 """
 Prometheus 指標模組 - 用於監控系統效能
+支援 multiprocess mode 以在多 worker 環境下正確收集指標
 """
+import os
 from prometheus_client import (
     Counter, Histogram, Gauge, Summary,
-    generate_latest, CONTENT_TYPE_LATEST
+    CONTENT_TYPE_LATEST, CollectorRegistry
 )
+from prometheus_client import multiprocess, generate_latest as _generate_latest
 from fastapi import Response
 import time
 import psutil
 import functools
 
+# 檢查是否在 multiprocess mode
+# 如果環境變數 prometheus_multiproc_dir 存在，則使用 multiprocess mode
+multiprocess_mode = os.environ.get('prometheus_multiproc_dir')
+
+if multiprocess_mode:
+    # Multiprocess mode: 使用共享的 CollectorRegistry
+    # 這允許多個 worker 進程共享 metrics 數據
+    from prometheus_client import REGISTRY as registry
+else:
+    # Single process mode: 使用默認的 registry
+    from prometheus_client import REGISTRY as registry
+
+def generate_latest():
+    """
+    生成最新的 metrics 數據
+    在 multiprocess mode 下，會聚合所有 worker 的數據
+    """
+    if multiprocess_mode:
+        # 聚合所有 worker 進程的 metrics
+        registry_local = CollectorRegistry()
+        multiprocess.MultiProcessCollector(registry_local)
+        return _generate_latest(registry_local)
+    else:
+        return _generate_latest(registry)
+
 # ==================== HTTP 請求指標 ====================
 http_requests_total = Counter(
     'http_requests_total',
     'Total HTTP requests',
-    ['method', 'endpoint', 'status']
+    ['method', 'endpoint', 'status'],
+    registry=registry
 )
 
 http_request_duration_seconds = Histogram(
     'http_request_duration_seconds',
     'HTTP request duration in seconds',
     ['method', 'endpoint'],
-    buckets=(0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0)
+    buckets=(0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0),
+    registry=registry
 )
 
 http_request_size_bytes = Summary(
     'http_request_size_bytes',
     'HTTP request size in bytes',
-    ['method', 'endpoint']
+    ['method', 'endpoint'],
+    registry=registry
 )
 
 http_response_size_bytes = Summary(
     'http_response_size_bytes',
     'HTTP response size in bytes',
-    ['method', 'endpoint']
+    ['method', 'endpoint'],
+    registry=registry
 )
 
 # ==================== Redis 指標 ====================
 redis_stream_messages_total = Counter(
     'redis_stream_messages_total',
     'Total messages written to Redis Stream',
-    ['status']  # success, failed
+    ['status'],  # success, failed
+    registry=registry
 )
 
 redis_stream_size = Gauge(
     'redis_stream_size',
-    'Current size of Redis Stream'
+    'Current size of Redis Stream',
+    registry=registry
 )
 
 redis_cache_hits_total = Counter(
     'redis_cache_hits_total',
-    'Total Redis cache hits'
+    'Total Redis cache hits',
+    registry=registry
 )
 
 redis_cache_misses_total = Counter(
     'redis_cache_misses_total',
-    'Total Redis cache misses'
+    'Total Redis cache misses',
+    registry=registry
 )
 
 redis_operation_duration_seconds = Histogram(
     'redis_operation_duration_seconds',
     'Redis operation duration',
     ['operation'],  # xadd, get, set, xreadgroup
-    buckets=(0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1)
+    buckets=(0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1),
+    registry=registry
 )
 
 # ==================== 資料庫指標 ====================
@@ -96,102 +133,119 @@ redis_operation_duration_seconds = Histogram(
 # PostgreSQL 專用指標 (與 Grafana 儀表板匹配)
 postgres_connections_active = Gauge(
     'postgres_connections_active',
-    'Active PostgreSQL connections'
+    'Active PostgreSQL connections',
+    registry=registry
 )
 
 postgres_connections_idle = Gauge(
     'postgres_connections_idle',
-    'Idle PostgreSQL connections'
+    'Idle PostgreSQL connections',
+    registry=registry
 )
 
 postgres_connections_total = Gauge(
     'postgres_connections_total',
-    'Total PostgreSQL connections'
+    'Total PostgreSQL connections',
+    registry=registry
 )
 
 postgres_query_duration_seconds = Histogram(
     'postgres_query_duration_seconds',
     'PostgreSQL query duration in seconds',
-    buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0)
+    buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+    registry=registry
 )
 
 postgres_queries_total = Counter(
     'postgres_queries_total',
     'Total PostgreSQL queries',
-    ['query_type']  # SELECT, INSERT, UPDATE, DELETE
+    ['query_type'],  # SELECT, INSERT, UPDATE, DELETE
+    registry=registry
 )
 
 postgres_database_size_bytes = Gauge(
     'postgres_database_size_bytes',
-    'PostgreSQL database size in bytes'
+    'PostgreSQL database size in bytes',
+    registry=registry
 )
 
 postgres_errors_total = Counter(
     'postgres_errors_total',
     'Total PostgreSQL errors',
-    ['error_type']  # connection_error, query_error, timeout, etc.
+    ['error_type'],  # connection_error, query_error, timeout, etc.
+    registry=registry
 )
 
 # ==================== 業務指標 ====================
 logs_received_total = Counter(
     'logs_received_total',
     'Total logs received',
-    ['device_id', 'log_level']
+    ['device_id', 'log_level'],
+    registry=registry
 )
 
 logs_processing_errors_total = Counter(
     'logs_processing_errors_total',
     'Total log processing errors',
-    ['error_type']
+    ['error_type'],
+    registry=registry
 )
 
 batch_processing_duration_seconds = Histogram(
     'batch_processing_duration_seconds',
     'Batch processing duration',
     ['batch_size'],
-    buckets=(0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0)
+    buckets=(0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0),
+    registry=registry
 )
 
 active_devices_total = Gauge(
     'active_devices_total',
-    'Total number of active devices'
+    'Total number of active devices',
+    registry=registry
 )
 
 # ==================== 系統資源指標 ====================
 system_cpu_usage_percent = Gauge(
     'system_cpu_usage_percent',
-    'System CPU usage percentage'
+    'System CPU usage percentage',
+    registry=registry
 )
 
 system_memory_usage_bytes = Gauge(
     'system_memory_usage_bytes',
     'System memory usage in bytes',
-    ['type']  # used, available, total
+    ['type'],  # used, available, total
+    registry=registry
 )
 
 system_disk_usage_bytes = Gauge(
     'system_disk_usage_bytes',
     'System disk usage in bytes',
-    ['type']  # used, free, total
+    ['type'],  # used, free, total
+    registry=registry
 )
 
 # ==================== Worker 指標 ====================
 worker_active_tasks = Gauge(
     'worker_active_tasks',
     'Number of active worker tasks',
-    ['worker_id']
+    ['worker_id'],
+    registry=registry
 )
 
 worker_processed_logs_total = Counter(
     'worker_processed_logs_total',
     'Total logs processed by worker',
-    ['worker_id', 'status']  # success, failed
+    ['worker_id', 'status'],  # success, failed
+    registry=registry
 )
 
 worker_batch_size = Histogram(
     'worker_batch_size',
     'Worker batch size distribution',
-    buckets=(10, 25, 50, 100, 200, 500, 1000)
+    buckets=(10, 25, 50, 100, 200, 500, 1000),
+    registry=registry
 )
 
 

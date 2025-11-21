@@ -2,7 +2,7 @@
 資料庫連線配置
 """
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text  # 新增 text 匯入以支援 SQLAlchemy 2.0
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.pool import QueuePool
@@ -129,7 +129,10 @@ async def test_db_connection():
     """
     try:
         async with AsyncSessionLocal() as session:
-            await session.execute("SELECT 1")
+            # 原始寫法:直接傳遞字串 "SELECT 1" 給 execute()
+            # await session.execute("SELECT 1")
+            # 修正:SQLAlchemy 2.0+ 要求使用 text() 包裝文字 SQL
+            await session.execute(text("SELECT 1"))
         return True
     except Exception as e:
         print(f"資料庫連線失敗: {e}")

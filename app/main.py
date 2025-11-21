@@ -73,7 +73,7 @@ async def update_metrics_task():
                 redis_stream_size.set(stream_len)
         except Exception as e:
             print(f"更新指標失敗: {e}")
-        await asyncio.sleep(15)  # 每 15 秒更新一次
+        await asyncio.sleep(10)  # 每 10 秒更新一次
 
 
 @app.on_event("startup")

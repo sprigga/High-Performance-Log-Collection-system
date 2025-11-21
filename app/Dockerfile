@@ -18,6 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 複製應用程式碼
 COPY . .
 
+# 為 Prometheus multiprocess mode 創建目錄
+# 這個目錄用於在多個 worker 之間共享 metrics 數據
+RUN mkdir -p /tmp/prometheus_multiproc && chmod 777 /tmp/prometheus_multiproc
+
+# 設定 Prometheus multiprocess 環境變數
+ENV prometheus_multiproc_dir=/tmp/prometheus_multiproc
+
 # 暴露端口
 EXPOSE 8000
 

@@ -35,10 +35,17 @@ scrape_configs:
       - targets: ['redis-exporter:9121']
     scrape_interval: 10s
 
-  # PostgreSQL 監控
+  # PostgreSQL 監控 (官方 exporter)
   - job_name: 'postgres'
     static_configs:
       - targets: ['postgres-exporter:9187']
+    scrape_interval: 10s
+
+  # PostgreSQL 連線監控 (自定義 exporter)
+  - job_name: 'postgres-connection'
+    static_configs:
+      - targets: ['postgres-connection-monitor:9188']
+    metrics_path: '/metrics'
     scrape_interval: 10s
 
   # Node Exporter (系統資源監控)

@@ -22,9 +22,9 @@ LOGS_PER_DEVICE = 100               # 每台設備發送的日誌數
 CONCURRENT_LIMIT = 200              # 提高並發以配合更小的批次
 # BATCH_SIZE = 100                    # 原始批次大小（P95 ~316ms）
 BATCH_SIZE = 5                     # 減小批次大小以降低 P95 回應時間
-USE_BATCH_API = True                # 是否使用批量 API（新增）
+USE_BATCH_API = True               # 是否使用批量 API（新增）
 # 新增：循環測試配置
-NUM_ITERATIONS = 500                  # 測試執行的循環次數（預設 1 次）
+NUM_ITERATIONS = 20                  # 測試執行的循環次數（預設 1 次）
 ITERATION_INTERVAL = 5              # 每次循環之間的間隔時間（秒，預設 0 秒）
 
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]

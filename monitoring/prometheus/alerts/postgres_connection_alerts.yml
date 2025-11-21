@@ -1,0 +1,251 @@
+# prometheus/alerts/postgres_connection_alerts.yml
+# PostgreSQL 連線監控告警規則
+
+groups:
+  - name: postgres_connection_alerts
+    interval: 30s
+    rules:
+      # ==================== 連線池監控 ====================
+
+      # 連線池使用率過高
+      - alert: HighConnectionPoolUsage
+        expr: (pg_pool_in_use_connections / pg_pool_max_size) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: connection_pool
+        annotations:
+          summary: "連線池使用率過高"
+          description: "連線池使用率 {{ $value | humanizePercentage }} 超過 80%，可能需要增加連線池大小"
+
+      # 連線池耗盡
+      - alert: ConnectionPoolExhausted
+        expr: pg_pool_available_connections == 0
+        for: 2m
+        labels:
+          severity: critical
+          category: connection_pool
+        annotations:
+          summary: "連線池已耗盡"
+          description: "連線池中沒有可用連線，所有連線都在使用中"
+
+      # 連線獲取時間過長
+      - alert: SlowConnectionAcquisition
+        expr: histogram_quantile(0.95, rate(pg_connection_acquire_duration_seconds_bucket[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          category: connection_pool
+        annotations:
+          summary: "連線獲取時間過長"
+          description: "P95 連線獲取時間 {{ $value }}s 超過 1 秒，可能是連線池不足"
+
+      # 連線獲取失敗率高
+      - alert: HighConnectionAcquireFailureRate
+        expr: |
+          rate(pg_connection_acquire_total{status!="success"}[5m])
+          /
+          rate(pg_connection_acquire_total[5m])
+          > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          category: connection_pool
+        annotations:
+          summary: "連線獲取失敗率過高"
+          description: "連線獲取失敗率 {{ $value | humanizePercentage }} 超過 5%"
+
+      # ==================== 連線洩漏檢測 ====================
+
+      # 檢測到連線洩漏
+      - alert: ConnectionLeakDetected
+        expr: rate(pg_connection_leaked_total[10m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: connection_leak
+        annotations:
+          summary: "檢測到可能的連線洩漏"
+          description: "在過去 10 分鐘內檢測到 {{ $value }} 個可能洩漏的連線（超過 5 分鐘未釋放）"
+
+      # 長時間運行的連線過多（1分鐘）
+      - alert: TooManyLongRunningConnections1Min
+        expr: pg_connection_long_running_total{threshold_seconds="60"} > 10
+        for: 5m
+        labels:
+          severity: info
+          category: connection_leak
+        annotations:
+          summary: "長時間運行的連線過多（1分鐘）"
+          description: "有 {{ $value }} 個連線運行超過 1 分鐘"
+
+      # 長時間運行的連線過多（5分鐘）
+      - alert: TooManyLongRunningConnections5Min
+        expr: pg_connection_long_running_total{threshold_seconds="300"} > 5
+        for: 3m
+        labels:
+          severity: warning
+          category: connection_leak
+        annotations:
+          summary: "長時間運行的連線過多（5分鐘）"
+          description: "有 {{ $value }} 個連線運行超過 5 分鐘，可能存在連線洩漏"
+
+      # 長時間運行的連線過多（15分鐘）
+      - alert: TooManyLongRunningConnections15Min
+        expr: pg_connection_long_running_total{threshold_seconds="900"} > 2
+        for: 2m
+        labels:
+          severity: critical
+          category: connection_leak
+        annotations:
+          summary: "長時間運行的連線過多（15分鐘）"
+          description: "有 {{ $value }} 個連線運行超過 15 分鐘，極可能是連線洩漏"
+
+      # ==================== 資料庫連線數監控 ====================
+
+      # 資料庫連線數過高
+      - alert: HighDatabaseConnections
+        expr: |
+          sum(pg_stat_activity_count{datname="logsdb"})
+          /
+          pg_max_connections
+          * 100 > 70
+        for: 10m
+        labels:
+          severity: warning
+          category: connection_limit
+        annotations:
+          summary: "資料庫連線數過高"
+          description: "當前連線數佔 max_connections 的 {{ $value | humanizePercentage }}，超過 70%"
+
+      # 資料庫連線數接近上限
+      - alert: DatabaseConnectionsNearLimit
+        expr: |
+          sum(pg_stat_activity_count{datname="logsdb"})
+          /
+          pg_max_connections
+          * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          category: connection_limit
+        annotations:
+          summary: "資料庫連線數接近上限"
+          description: "當前連線數佔 max_connections 的 {{ $value | humanizePercentage }}，超過 90%，需要立即處理"
+
+      # Idle in transaction 連線過多
+      - alert: TooManyIdleInTransactionConnections
+        expr: pg_connections_idle_in_transaction{datname="logsdb"} > 5
+        for: 10m
+        labels:
+          severity: warning
+          category: connection_leak
+        annotations:
+          summary: "Idle in transaction 連線過多"
+          description: "有 {{ $value }} 個 idle in transaction 連線，可能是事務未正確提交或回滾"
+
+      # 等待鎖的連線過多
+      - alert: TooManyWaitingConnections
+        expr: pg_connections_waiting{datname="logsdb"} > 3
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "等待鎖的連線過多"
+          description: "有 {{ $value }} 個連線正在等待鎖，可能存在死鎖或長時間鎖定"
+
+      # ==================== 連線使用率與系統負載 ====================
+
+      # 每個 CPU 核心的連線數過多
+      - alert: HighConnectionsPerCPU
+        expr: pg_connections_per_cpu_core > 10
+        for: 10m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "每個 CPU 核心的連線數過多"
+          description: "每個 CPU 核心平均有 {{ $value }} 個活躍連線，可能影響系統性能"
+
+      # 連線使用率異常
+      - alert: AbnormalConnectionUsageRatio
+        expr: pg_connection_usage_ratio > 0.8
+        for: 15m
+        labels:
+          severity: warning
+          category: connection_limit
+        annotations:
+          summary: "連線使用率異常"
+          description: "連線使用率 {{ $value | humanizePercentage }} 持續超過 80%"
+
+      # ==================== max_connections 調整建議 ====================
+
+      # 建議增加 max_connections
+      - alert: SuggestIncreaseMaxConnections
+        expr: |
+          (
+            sum(pg_stat_activity_count{datname="logsdb"})
+            /
+            pg_max_connections
+          ) > 0.85
+          and
+          rate(pg_connection_acquire_total{status!="success"}[10m]) > 0
+        for: 20m
+        labels:
+          severity: info
+          category: tuning
+        annotations:
+          summary: "建議增加 max_connections 設定"
+          description: |
+            連線數持續接近上限且有獲取失敗的情況，建議：
+            1. 增加 PostgreSQL 的 max_connections 設定
+            2. 或優化應用程式的連線使用
+            3. 或增加連線池大小
+
+      # 建議優化連線使用
+      - alert: SuggestOptimizeConnectionUsage
+        expr: |
+          pg_connection_long_running_total{threshold_seconds="300"} > 5
+          and
+          pg_pool_in_use_connections / pg_pool_max_size > 0.7
+        for: 15m
+        labels:
+          severity: info
+          category: tuning
+        annotations:
+          summary: "建議優化連線使用"
+          description: |
+            存在多個長時間運行的連線且連線池使用率高，建議：
+            1. 檢查並優化慢查詢
+            2. 確保事務及時提交或回滾
+            3. 檢查是否有連線洩漏
+
+      # ==================== PostgreSQL Exporter 補充告警 ====================
+
+      # PostgreSQL 活躍連線數異常增長
+      - alert: RapidActiveConnectionGrowth
+        expr: |
+          (
+            sum(pg_stat_activity_count{datname="logsdb", state="active"})
+            -
+            sum(pg_stat_activity_count{datname="logsdb", state="active"} offset 5m)
+          ) > 20
+        for: 2m
+        labels:
+          severity: warning
+          category: anomaly
+        annotations:
+          summary: "活躍連線數異常增長"
+          description: "活躍連線數在 5 分鐘內增長了 {{ $value }} 個，可能出現異常"
+
+      # PostgreSQL 空閒連線數過多
+      - alert: TooManyIdleConnections
+        expr: sum(pg_stat_activity_count{datname="logsdb", state="idle"}) > 50
+        for: 15m
+        labels:
+          severity: info
+          category: optimization
+        annotations:
+          summary: "空閒連線數過多"
+          description: "有 {{ $value }} 個空閒連線，可能需要調整連線池的最小大小或空閒超時設定"

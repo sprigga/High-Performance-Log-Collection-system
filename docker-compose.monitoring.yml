@@ -118,6 +118,26 @@ services:
     restart: unless-stopped
 
   # ==========================================
+  # PostgreSQL Connection Monitor (自定義)
+  # ==========================================
+  postgres-connection-monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres-monitor
+    container_name: log-postgres-connection-monitor
+    ports:
+      - "9188:9188"
+    environment:
+      - TZ=Asia/Taipei
+      - DATABASE_URL=postgresql://loguser:logpass@postgres:5432/logsdb
+      - CPU_CORES=4
+    depends_on:
+      - postgres
+    networks:
+      - log-network
+    restart: unless-stopped
+
+  # ==========================================
   # Node Exporter (系統資源監控)
   # ==========================================
   node-exporter:

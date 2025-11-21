@@ -1,0 +1,40 @@
+# Dockerfile.postgres-monitor
+# PostgreSQL 連線監控服務的 Dockerfile
+
+FROM python:3.11-slim
+
+LABEL maintainer="log-collection-system"
+LABEL description="PostgreSQL Connection Monitor with Prometheus metrics"
+
+# 設定工作目錄
+WORKDIR /app
+
+# 安裝系統依賴
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# 複製 requirements
+# 修正：requirements.txt 位於 app/ 目錄下
+COPY app/requirements.txt .
+
+# 安裝 Python 依賴（僅監控所需）
+RUN pip install --no-cache-dir \
+    asyncpg==0.29.0 \
+    prometheus-client==0.19.0 \
+    aiohttp==3.9.1 \
+    psutil==5.9.6
+
+# 複製監控腳本
+COPY monitoring/postgres_connection_monitor.py .
+
+# 暴露 metrics 端口
+EXPOSE 9188
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:9188/health')" || exit 1
+
+# 運行監控腳本
+CMD ["python", "-u", "postgres_connection_monitor.py"]

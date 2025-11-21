@@ -19,7 +19,7 @@ CONCURRENT_LIMIT = 200               # 並發限制
 BATCH_SIZE = 5                       # 批次大小
 USE_BATCH_API = True                 # 是否使用批量 API
 NUM_ITERATIONS = 20                 # 測試執行的循環次數
-ITERATION_INTERVAL = 10               # 每次循環之間的間隔時間（秒）
+ITERATION_INTERVAL = 5               # 每次循環之間的間隔時間（秒）
 
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 LOG_MESSAGES = [
