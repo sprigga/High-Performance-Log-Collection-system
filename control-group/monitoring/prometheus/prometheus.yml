@@ -15,7 +15,7 @@ scrape_configs:
       - targets:
         - 'fastapi-simple:8000'
     metrics_path: '/metrics'
-    scrape_interval: 5s
+    scrape_interval: 15s
 
   # Node Exporter (系統資源監控)
   - job_name: 'node'

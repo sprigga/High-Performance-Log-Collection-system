@@ -10,37 +10,130 @@
   },
   "panels": [
     {
-      "id": 1,
-      "title": "每秒請求數 (QPS)",
+      "id": 0,
+      "title": "系統吞吐量 (Throughput) - 對照組低吞吐量監控",
       "type": "graph",
       "gridPos": {
         "x": 0,
         "y": 0,
-        "w": 12,
-        "h": 9
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(logs_received_total[1m]))",
+          "legendFormat": "每秒日誌數 (logs/s) - 1m 平均",
+          "refId": "A",
+          "interval": "5s"
+        },
+        {
+          "expr": "sum(rate(logs_received_total[2m]))",
+          "legendFormat": "每秒日誌數 (logs/s) - 2m 平滑",
+          "refId": "B",
+          "interval": "5s"
+        },
+        {
+          "expr": "sum(rate(http_requests_total[1m]))",
+          "legendFormat": "每秒請求數 (req/s) - 批量請求",
+          "refId": "C",
+          "interval": "5s"
+        },
+        {
+          "expr": "sum(rate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[1m]))",
+          "legendFormat": "PostgreSQL 每秒插入行數 (rows/s)",
+          "refId": "D",
+          "interval": "5s"
+        }
+      ],
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "每秒處理量",
+          "show": true,
+          "min": 0,
+          "max": null
+        },
+        {
+          "format": "short",
+          "show": false
+        }
+      ],
+      "xaxis": {
+        "show": true,
+        "mode": "time"
+      },
+      "lines": true,
+      "fill": 1,
+      "linewidth": 3,
+      "pointradius": 1,
+      "points": false,
+      "bars": false,
+      "stack": false,
+      "percentage": false,
+      "steppedLine": false,
+      "legend": {
+        "show": true,
+        "values": true,
+        "min": true,
+        "max": true,
+        "current": true,
+        "total": true,
+        "avg": true,
+        "alignAsTable": true,
+        "rightSide": false
+      },
+      "nullPointMode": "connected",
+      "description": "對照組系統吞吐量監控（簡化版 - 無 Nginx、連接池、Redis、Worker）：\n\n📊 實測數據參考（100 設備 × 100 日誌 = 10,000 筆）：\n• 吞吐量: ~382 logs/秒\n• 總耗時: ~26 秒\n• 批量請求數: 2,000 (batch_size=5)\n\n圖表說明：\n• logs/s - 實際接收的日誌數量（目標指標）\n• req/s - 批量 API 請求數（每個請求包含 5 筆日誌）\n• rows/s - PostgreSQL 實際插入速率\n\n✨ 圖表優化：使用 rate(1m/2m) 搭配 5s interval，減少波動提升可讀性\n⚠️ 對照組預期吞吐量: 300-500 logs/秒（vs 主系統目標 10,000 logs/秒）"
+    },
+    {
+      "id": 1,
+      "title": "每秒請求數 (QPS) - 對照組長時程壓測監控",
+      "type": "graph",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 8
       },
       "targets": [
         {
           "expr": "sum(rate(http_requests_total[1m]))",
-          "legendFormat": "總 QPS",
-          "refId": "A"
+          "legendFormat": "1分鐘平均 QPS (適合長時程壓測)",
+          "refId": "A",
+          "interval": "1s"
+        },
+        {
+          "expr": "sum(rate(http_requests_total[30s]))",
+          "legendFormat": "30秒平均 QPS",
+          "refId": "B",
+          "interval": "1s"
+        },
+        {
+          "expr": "sum(irate(http_requests_total[10s]))",
+          "legendFormat": "10秒瞬時 QPS (irate)",
+          "refId": "C",
+          "interval": "1s"
         },
         {
           "expr": "sum(rate(http_requests_total{status=~\"2..\"}[1m]))",
-          "legendFormat": "成功請求",
-          "refId": "B"
+          "legendFormat": "成功請求 (1m avg)",
+          "refId": "D",
+          "interval": "1s"
         },
         {
           "expr": "sum(rate(http_requests_total{status=~\"5..\"}[1m]))",
-          "legendFormat": "錯誤請求",
-          "refId": "C"
+          "legendFormat": "錯誤請求 (1m avg)",
+          "refId": "E",
+          "interval": "1s"
         }
       ],
       "yaxes": [
         {
           "format": "reqps",
-          "label": "請求/秒",
-          "show": true
+          "label": "批量請求/秒",
+          "show": true,
+          "min": 0,
+          "max": null
         },
         {
           "format": "short",
@@ -62,23 +155,53 @@
       "legend": {
         "show": true,
         "values": true,
-        "min": false,
+        "min": true,
         "max": true,
         "current": true,
         "total": false,
-        "avg": true
+        "avg": true,
+        "alignAsTable": true,
+        "rightSide": false
       },
-      "nullPointMode": "connected"
+      "nullPointMode": "connected",
+      "alert": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [50],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": ["A", "1m", "now"]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "alerting",
+        "frequency": "1m",
+        "handler": 1,
+        "name": "對照組 QPS 過低警告",
+        "noDataState": "no_data",
+        "notifications": []
+      },
+      "description": "對照組 QPS 監控（針對 26 秒長時程壓測優化）：\n\n📊 實測數據參考（26.15 秒測試）：\n• 批量請求總數: 2,000 次\n• 平均 QPS: ~76.5 req/s (2000 ÷ 26.15)\n• 總日誌數: 10,000 筆\n• Batch size: 5 logs/request\n\n圖表調整說明：\n• 使用 rate(1m) 作為主要指標，適合 20+ 秒的長時程壓測\n• 新增 30s 和 10s 時間窗口，提供多尺度觀察\n• 移除過短的 5s irate（不適合 26 秒長度的壓測）\n• 加入成功/錯誤請求分類（1m 平均）\n\n⚠️ 注意：此為批量 API 的請求數，非實際日誌數\n實際吞吐量 = QPS × batch_size (例: 76.5 × 5 = 382.5 logs/s)"
     },
     {
       "id": 2,
       "title": "HTTP 請求延遲 (P50, P95, P99)",
       "type": "graph",
       "gridPos": {
-        "x": 12,
-        "y": 0,
+        "x": 0,
+        "y": 16,
         "w": 12,
-        "h": 9
+        "h": 8
       },
       "targets": [
         {
@@ -132,127 +255,18 @@
       "nullPointMode": "connected"
     },
     {
-      "id": 3,
-      "title": "系統 CPU 使用率",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 9,
-        "w": 8,
-        "h": 9
-      },
-      "targets": [
-        {
-          "expr": "system_cpu_usage_percent",
-          "legendFormat": "CPU 使用率",
-          "refId": "A"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "percent",
-          "label": "使用率 (%)",
-          "max": 100,
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 4,
-      "title": "系統記憶體使用",
-      "type": "graph",
-      "gridPos": {
-        "x": 8,
-        "y": 9,
-        "w": 8,
-        "h": 9
-      },
-      "targets": [
-        {
-          "expr": "system_memory_usage_bytes{type='used'}",
-          "legendFormat": "已使用",
-          "refId": "A"
-        },
-        {
-          "expr": "system_memory_usage_bytes{type='available'}",
-          "legendFormat": "可用",
-          "refId": "B"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "bytes",
-          "label": "記憶體 (Bytes)",
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
       "id": 5,
       "title": "每秒日誌接收數",
       "type": "graph",
       "gridPos": {
-        "x": 16,
-        "y": 9,
-        "w": 8,
-        "h": 9
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
       },
       "targets": [
         {
-          "expr": "sum(rate(logs_received_total[1m])) by (log_level)",
+          "expr": "sum(irate(logs_received_total[30s])) by (log_level)",
           "legendFormat": "{{log_level}}",
           "refId": "A"
         }
@@ -292,65 +306,14 @@
       "nullPointMode": "connected"
     },
     {
-      "id": 8,
-      "title": "PostgreSQL 查詢時間",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 18,
-        "w": 12,
-        "h": 9
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(postgres_query_duration_seconds_bucket[5m])) by (le, operation))",
-          "legendFormat": "P95 - {{operation}}",
-          "refId": "A"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "s",
-          "label": "查詢時間 (秒)",
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
       "id": 9,
       "title": "批量處理時間",
       "type": "graph",
       "gridPos": {
-        "x": 12,
-        "y": 18,
-        "w": 12,
-        "h": 9
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 8
       },
       "targets": [
         {
@@ -386,68 +349,6 @@
         "show": true,
         "values": true,
         "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 10,
-      "title": "PostgreSQL 連線數",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 27,
-        "w": 24,
-        "h": 9
-      },
-      "targets": [
-        {
-          "expr": "sum(pg_stat_activity_count{datname=\"logsdb\",state=\"active\"})",
-          "legendFormat": "活躍連線",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(pg_stat_activity_count{datname=\"logsdb\",state=\"idle\"})",
-          "legendFormat": "閒置連線",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(pg_stat_activity_count{datname=\"logsdb\"})",
-          "legendFormat": "總連線數",
-          "refId": "C"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "連線數 (個)",
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": true,
         "max": true,
         "current": true,
         "total": false,

@@ -46,3 +46,6 @@ logs/
 .coverage
 htmlcov/
 .cov/
+
+# Terminal Paste Image folder
+.cp-images/

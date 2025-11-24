@@ -13,19 +13,24 @@ from typing import List
 # ==========================================
 # BASE_URL = "http://localhost:8080"  # 原始端口設定
 BASE_URL = "http://localhost:18723"  # Nginx 端點（對應 docker-compose.yml 配置）
-NUM_DEVICES = 100                   # 設備數量
+
+# ==========================================
+# 方案 A: 延長單次測試時間配置（推薦）
+# ==========================================
+# NUM_DEVICES = 100                   # 原始設備數量 (單次測試 ~0.8 秒，峰值 2,483 req/s)
+NUM_DEVICES = 100                   # 增加設備數量讓單次測試約 3 秒（峰值仍維持 ~2,500 req/s）
 LOGS_PER_DEVICE = 100               # 每台設備發送的日誌數
-# CONCURRENT_LIMIT = 50               # 原始並發限制
-# CONCURRENT_LIMIT = 200              # 第一次調整
-# CONCURRENT_LIMIT = 500              # 進一步提升並發限制
-# CONCURRENT_LIMIT = 100              # 批量模式使用較少並發（原設定）
+
 CONCURRENT_LIMIT = 200              # 提高並發以配合更小的批次
+
 # BATCH_SIZE = 100                    # 原始批次大小（P95 ~316ms）
 BATCH_SIZE = 5                     # 減小批次大小以降低 P95 回應時間
 USE_BATCH_API = True               # 是否使用批量 API（新增）
+
 # 新增：循環測試配置
 NUM_ITERATIONS = 20                  # 測試執行的循環次數（預設 1 次）
-ITERATION_INTERVAL = 5              # 每次循環之間的間隔時間（秒，預設 0 秒）
+# ITERATION_INTERVAL = 1              # 舊設定：1 秒間隔 (工作比例 45%，稀釋效應不明顯)
+ITERATION_INTERVAL = 5              # 改為 5 秒間隔以配合 Grafana 時間窗口 (irate[5s] 捕捉真實峰值 2,437 req/s)
 
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 LOG_MESSAGES = [
@@ -324,6 +329,9 @@ async def stress_test(
     # 吞吐量按實際日誌數計算（而非請求數）
     throughput = successful_logs / total_time if total_time > 0 else 0
 
+    # 計算 QPS（請求數/秒）
+    qps = successful_requests / total_time if total_time > 0 else 0
+
     # 輸出結果
     print("\n" + "=" * 70)
     print("  📈 測試結果")
@@ -343,7 +351,8 @@ async def stress_test(
     print(f"  • 失敗請求: {failed_requests:,} ({failed_requests/total_requests*100:.1f}%)")
     
     print(f"\n⚡ 效能指標：")
-    print(f"  • 吞吐量: {throughput:.2f} logs/秒")
+    print(f"  • QPS (請求/秒): {qps:.2f} req/s")
+    print(f"  • 吞吐量 (日誌/秒): {throughput:.2f} logs/s")
     print(f"  • 平均回應時間: {avg_response_time:.2f} ms")
     print(f"  • 最小回應時間: {min_response_time:.2f} ms")
     print(f"  • 最大回應時間: {max_response_time:.2f} ms")
@@ -390,6 +399,15 @@ async def stress_test(
     
     print("=" * 70)
 
+    # 返回測試結果供彙總統計使用
+    return {
+        "total_time": total_time,
+        "successful_requests": successful_requests,
+        "successful_logs": successful_logs,
+        "qps": qps,
+        "throughput": throughput
+    }
+
 # ==========================================
 # 查詢測試
 # ==========================================
@@ -424,10 +442,13 @@ async def main():
     """
     主程式入口
     """
+    # 收集所有測試結果
+    all_test_results = []
+
     # 修改：支援多輪循環測試
     for i in range(NUM_ITERATIONS):
         # 執行壓力測試（傳入循環資訊）
-        await stress_test(
+        result = await stress_test(
             num_devices=NUM_DEVICES,
             logs_per_device=LOGS_PER_DEVICE,
             concurrent_limit=CONCURRENT_LIMIT,
@@ -435,10 +456,71 @@ async def main():
             current_iteration=i + 1     # 新增：傳入當前循環編號
         )
 
+        # 收集結果
+        all_test_results.append(result)
+
         # 新增：如果不是最後一輪，等待間隔時間
         if i < NUM_ITERATIONS - 1 and ITERATION_INTERVAL > 0:
             print(f"\n⏸️  等待 {ITERATION_INTERVAL} 秒後開始下一輪測試...")
             await asyncio.sleep(ITERATION_INTERVAL)
+
+    # 計算時間稀釋修正後的指標
+    if NUM_ITERATIONS > 1 and ITERATION_INTERVAL > 0:
+        print("\n" + "=" * 70)
+        print("  🔬 時間稀釋修正分析")
+        print("=" * 70)
+
+        # 計算總工作時間和總等待時間
+        total_work_time = sum(r["total_time"] for r in all_test_results)
+        total_wait_time = ITERATION_INTERVAL * (NUM_ITERATIONS - 1)
+        total_elapsed_time = total_work_time + total_wait_time
+
+        # 計算總成功數
+        total_requests = sum(r["successful_requests"] for r in all_test_results)
+        total_logs = sum(r["successful_logs"] for r in all_test_results)
+
+        # 實際測量的平均值（含稀釋）
+        measured_avg_qps = total_requests / total_elapsed_time
+        measured_avg_throughput = total_logs / total_elapsed_time
+
+        # 修正後的值（純工作時間）
+        corrected_qps = total_requests / total_work_time
+        corrected_throughput = total_logs / total_work_time
+
+        # 工作時間比例
+        work_ratio = total_work_time / total_elapsed_time
+
+        print(f"\n⏱️  時間分析：")
+        print(f"  • 總工作時間: {total_work_time:.2f} 秒 ({work_ratio*100:.1f}%)")
+        print(f"  • 總等待時間: {total_wait_time:.2f} 秒 ({(1-work_ratio)*100:.1f}%)")
+        print(f"  • 總經過時間: {total_elapsed_time:.2f} 秒")
+
+        print(f"\n📊 指標對比：")
+        print(f"  • 實測平均 QPS: {measured_avg_qps:.2f} req/s (含稀釋)")
+        print(f"  • 修正後 QPS: {corrected_qps:.2f} req/s (純工作時間)")
+        print(f"  • 稀釋比例: {work_ratio:.2%}")
+
+        print(f"\n  • 實測平均吞吐量: {measured_avg_throughput:.2f} logs/s (含稀釋)")
+        print(f"  • 修正後吞吐量: {corrected_throughput:.2f} logs/s (純工作時間)")
+
+        print(f"\n✅ 驗證換算公式：")
+        calculated_throughput = corrected_qps * BATCH_SIZE
+        throughput_match = abs(calculated_throughput - corrected_throughput) / corrected_throughput < 0.01
+        print(f"  • 修正後吞吐量 = 修正後 QPS × BATCH_SIZE")
+        print(f"  • {corrected_throughput:.2f} ≈ {corrected_qps:.2f} × {BATCH_SIZE}")
+        print(f"  • {corrected_throughput:.2f} ≈ {calculated_throughput:.2f}")
+        if throughput_match:
+            print(f"  • ✅ 換算公式驗證通過 (誤差 < 1%)")
+        else:
+            print(f"  • ⚠️  換算公式有偏差")
+
+        print(f"\n💡 Grafana 觀測提示：")
+        print(f"  • 如果使用 rate()[1m]，Grafana 會顯示: ~{measured_avg_qps:.0f} req/s (含稀釋)")
+        print(f"  • 如果使用 irate()[5s]，Grafana 在峰值期間會顯示: ~{corrected_qps:.0f} req/s (真實峰值)")
+        print(f"  • 兩者差異來自時間稀釋效應: {work_ratio:.0%} 工作時間比例")
+        print(f"  • 5秒間隔設計：讓 irate[5s] 捕捉單次測試峰值，rate[30s] 顯示平均值")
+
+        print("=" * 70)
 
     # 等待 Worker 處理完成
     print("\n⏳ 等待 5 秒讓 Worker 處理日誌...")

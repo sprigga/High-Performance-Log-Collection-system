@@ -65,7 +65,7 @@ groups:
 
       # Redis 快取命中率低
       - alert: LowCacheHitRate
-        expr: rate(redis_cache_hits_total[5m]) / (rate(redis_cache_hits_total[5m]) + rate(redis_cache_misses_total[5m])) < 0.5
+        expr: rate(redis_cache_hits_total[1m]) / (rate(redis_cache_hits_total[1m]) + rate(redis_cache_misses_total[1m])) < 0.5
         for: 15m
         labels:
           severity: warning
