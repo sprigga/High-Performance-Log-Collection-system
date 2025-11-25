@@ -1,7 +1,7 @@
 {
   "id": null,
   "uid": "log-collection-integrated",
-  "title": "日誌收集系統 - 整合效能儀表板 (Redis + 對照組)",
+  "title": "日誌收集系統 - 整合效能儀表板 (Redis + Worker)",
   "timezone": "Asia/Taipei",
   "refresh": "10s",
   "time": {
@@ -17,37 +17,31 @@
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 8
+        "h": 10
       },
       "targets": [
         {
-          "expr": "sum(irate(logs_received_total[30s]))",
-          "legendFormat": "每秒日誌數 (logs/s) - 30s 平均",
+          "expr": "sum(irate(logs_received_total[5s]))",
+          "legendFormat": "日誌數 (logs/s) - 瞬時峰值",
           "refId": "A",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(logs_received_total[1m]))",
-          "legendFormat": "每秒日誌數 (logs/s) - 1m 平滑",
+          "expr": "sum(irate(redis_stream_messages_total{status='success'}[5s]))",
+          "legendFormat": "Redis 訊息 (msg/s) - 瞬時峰值",
           "refId": "B",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(http_requests_total[30s]))",
-          "legendFormat": "每秒請求數 (req/s) - 批量請求",
+          "expr": "sum(irate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[5s]))",
+          "legendFormat": "PG 插入 (rows/s) - 瞬時峰值",
           "refId": "C",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[30s]))",
-          "legendFormat": "PostgreSQL 每秒插入行數 (rows/s)",
+          "expr": "sum(irate(http_requests_total[5s]))",
+          "legendFormat": "HTTP 請求 (req/s) - 瞬時峰值",
           "refId": "D",
-          "interval": "1s"
-        },
-        {
-          "expr": "sum(irate(redis_stream_messages_total{status='success'}[30s]))",
-          "legendFormat": "Redis Stream 每秒訊息數 (msg/s)",
-          "refId": "E",
           "interval": "1s"
         }
       ],
@@ -57,7 +51,7 @@
           "label": "每秒處理量",
           "show": true,
           "min": 0,
-          "max": null
+          "logBase": 1
         },
         {
           "format": "short",
@@ -69,164 +63,63 @@
         "mode": "time"
       },
       "lines": true,
-      "fill": 0,
+      "fill": 1,
+      "fillGradient": 3,
       "linewidth": 2,
-      "pointradius": 2,
+      "pointradius": 1,
       "points": false,
       "bars": false,
       "stack": false,
       "percentage": false,
+      "steppedLine": false,
       "legend": {
         "show": true,
         "values": true,
-        "min": true,
+        "min": false,
         "max": true,
         "current": true,
-        "total": true,
+        "total": false,
         "avg": true,
         "alignAsTable": true,
-        "rightSide": false
+        "rightSide": false,
+        "sideWidth": 300,
+        "hideEmpty": false,
+        "hideZero": false
       },
-      "nullPointMode": "connected",
-      "description": "主系統吞吐量監控（完整版 - 包含 Nginx、連接池、Redis、Worker）：\n\n📊 實測數據參考（目標：10,000+ logs/秒）：\n• 吞吐量: 目標 > 10,000 logs/秒\n• 批量處理: 使用 Redis Stream 非同步處理\n• Worker 並發: 多 Worker 平行處理提升效能\n\n圖表說明：\n• logs/s - 實際接收的日誌數量（主要目標指標）\n• req/s - 批量 API 請求數（與對照組比較用）\n• rows/s - PostgreSQL 實際插入速率\n• msg/s - Redis Stream 非同步訊息處理速率\n\n🎯 主系統預期吞吐量: 10,000+ logs/秒（vs 對照組 300-500 logs/秒）\n📈 效能提升目標: 20-30 倍"
-    },
-    {
-      "id": 1,
-      "title": "每秒請求數 (QPS) - 瞬時 vs 平均",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 8,
-        "w": 24,
-        "h": 8
-      },
-      "targets": [
+      "seriesOverrides": [
         {
-          "expr": "sum(irate(http_requests_total[5s]))",
-          "legendFormat": "瞬時峰值 QPS (irate 5s)",
-          "refId": "A",
-          "interval": "1s"
+          "alias": "日誌數 (logs/s)",
+          "color": "#73BF69",
+          "linewidth": 3,
+          "zindex": 3
         },
         {
-          "expr": "sum(irate(http_requests_total[10s]))",
-          "legendFormat": "10秒平滑 QPS (irate 10s)",
-          "refId": "B",
-          "interval": "1s"
+          "alias": "Redis 訊息 (msg/s)",
+          "color": "#F2495C",
+          "linewidth": 2,
+          "zindex": 2
         },
         {
-          "expr": "sum(rate(http_requests_total[30s]))",
-          "legendFormat": "30秒平均 QPS (rate 30s)",
-          "refId": "C",
-          "interval": "1s"
+          "alias": "PG 插入 (rows/s)",
+          "color": "#5794F2",
+          "linewidth": 2,
+          "zindex": 1
         },
         {
-          "expr": "sum(irate(http_requests_total{status=~\"2..\"}[5s]))",
-          "legendFormat": "成功請求 (瞬時)",
-          "refId": "D",
-          "interval": "1s"
-        },
-        {
-          "expr": "sum(irate(http_requests_total{status=~\"5..\"}[5s]))",
-          "legendFormat": "錯誤請求 (瞬時)",
-          "refId": "E",
-          "interval": "1s"
+          "alias": "HTTP 請求 (req/s)",
+          "color": "#B877D9",
+          "linewidth": 2,
+          "zindex": 0,
+          "dashes": true
         }
       ],
-      "yaxes": [
-        {
-          "format": "reqps",
-          "label": "請求/秒",
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
+      "nullPointMode": "null",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
       },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected",
-      "description": "QPS 量測說明：\n• irate 5s - 捕捉瞬時峰值，適合短時間高負載測試 (例: 0.82秒壓測達 2,437 req/s)\n• irate 10s - 10秒平滑曲線，減少抖動\n• rate 30s - 30秒平均值，呈現整體趨勢\n\n短時間壓測 (< 1秒) 建議觀察 irate 5s 曲線以捕捉真實峰值。"
-    },
-    {
-      "id": 2,
-      "title": "HTTP 請求延遲 (P50, P95, P99)",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 16,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-          "legendFormat": "P50",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-          "legendFormat": "P95",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))",
-          "legendFormat": "P99",
-          "refId": "C"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "s",
-          "label": "延遲時間 (秒)",
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
+      "description": "主系統吞吐量監控（完整版 - 包含 Nginx、連接池、Redis、Worker）：\n\n📊 實測數據參考（目標：10,000+ logs/秒）：\n• 吞吐量: 目標 > 10,000 logs/秒\n• 批量處理: 使用 Redis Stream 非同步處理\n• Worker 並發: 多 Worker 平行處理提升效能\n\n⏱️ 時間窗口優化（針對 0.9 秒短測試）：\n• irate[5s] - 捕捉瞬時峰值（覆蓋 ~2.6 個測試週期）\n• 測試配置：單次 0.9s，循環間隔 5s，總週期 5.9s\n• 工作時間比例：15.3%（避免數據重疊）\n\n圖表說明：\n• 日誌數 - 實際接收的日誌數量（主要目標指標）- 綠色粗線\n• Redis 訊息 - Redis Stream 非同步訊息處理速率 - 紅色線\n• PG 插入 - PostgreSQL 實際插入速率 - 藍色線\n• HTTP 請求 - 批量 API 請求數 - 紫色虛線\n\n🎯 主系統預期吞吐量: 10,000+ logs/秒（vs 對照組 300-500 logs/秒）\n📈 效能提升目標: 20-30 倍\n💡 實測峰值：QPS 2,225 req/s，吞吐量 11,127 logs/s"
     },
     {
       "id": 4,
@@ -279,7 +172,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "connected"
+      "nullPointMode": "null"
     },
     {
       "id": 9,
@@ -293,13 +186,13 @@
       },
       "targets": [
         {
-          "expr": "irate(redis_stream_messages_total{status='success'}[1m])",
-          "legendFormat": "成功",
+          "expr": "irate(redis_stream_messages_total{status='success'}[5s])",
+          "legendFormat": "成功 - 瞬時峰值",
           "refId": "A"
         },
         {
-          "expr": "irate(redis_stream_messages_total{status='failed'}[1m])",
-          "legendFormat": "失敗",
+          "expr": "irate(redis_stream_messages_total{status='failed'}[5s])",
+          "legendFormat": "失敗 - 瞬時峰值",
           "refId": "B"
         }
       ],
@@ -335,7 +228,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "connected"
+      "nullPointMode": "null"
     },
     {
       "id": 8,
@@ -349,8 +242,8 @@
       },
       "targets": [
         {
-          "expr": "sum(irate(logs_received_total[30s])) by (log_level)",
-          "legendFormat": "{{log_level}}",
+          "expr": "sum(irate(logs_received_total[5s])) by (log_level)",
+          "legendFormat": "{{log_level}} - 瞬時峰值",
           "refId": "A"
         }
       ],
@@ -386,122 +279,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 12,
-      "title": "PostgreSQL 查詢統計",
-      "type": "graph",
-      "gridPos": {
-        "x": 0,
-        "y": 32,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "irate(pg_stat_database_xact_commit{datname=\"logsdb\"}[30s])",
-          "legendFormat": "提交事務/秒",
-          "refId": "A"
-        },
-        {
-          "expr": "irate(pg_stat_database_xact_rollback{datname=\"logsdb\"}[30s])",
-          "legendFormat": "回滾事務/秒",
-          "refId": "B"
-        },
-        {
-          "expr": "irate(pg_stat_database_tup_returned{datname=\"logsdb\"}[30s])",
-          "legendFormat": "查詢行數/秒",
-          "refId": "C"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "short",
-          "label": "操作/秒",
-          "min": 0,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": true,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
-    },
-    {
-      "id": 13,
-      "title": "PostgreSQL 快取命中率",
-      "type": "graph",
-      "gridPos": {
-        "x": 12,
-        "y": 32,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "expr": "rate(pg_stat_database_blks_hit{datname=\"logsdb\"}[5m]) / (rate(pg_stat_database_blks_hit{datname=\"logsdb\"}[5m]) + rate(pg_stat_database_blks_read{datname=\"logsdb\"}[5m])) * 100",
-          "legendFormat": "快取命中率",
-          "refId": "A"
-        }
-      ],
-      "yaxes": [
-        {
-          "format": "percent",
-          "label": "命中率 (%)",
-          "min": 0,
-          "max": 100,
-          "show": true
-        },
-        {
-          "format": "short",
-          "show": false
-        }
-      ],
-      "xaxis": {
-        "show": true,
-        "mode": "time"
-      },
-      "lines": true,
-      "fill": 0,
-      "linewidth": 2,
-      "pointradius": 2,
-      "points": false,
-      "bars": false,
-      "stack": false,
-      "percentage": false,
-      "legend": {
-        "show": true,
-        "values": true,
-        "min": false,
-        "max": true,
-        "current": true,
-        "total": false,
-        "avg": true
-      },
-      "nullPointMode": "connected"
+      "nullPointMode": "null"
     },
     {
       "id": 14,
@@ -552,7 +330,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "connected"
+      "nullPointMode": "null"
     }
   ],
   "editable": true,

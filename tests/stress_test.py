@@ -5,8 +5,10 @@ import asyncio
 import aiohttp
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
+import sys
+import os
 
 # ==========================================
 # 測試配置
@@ -28,9 +30,9 @@ BATCH_SIZE = 5                     # 減小批次大小以降低 P95 回應時�
 USE_BATCH_API = True               # 是否使用批量 API（新增）
 
 # 新增：循環測試配置
-NUM_ITERATIONS = 20                  # 測試執行的循環次數（預設 1 次）
-# ITERATION_INTERVAL = 1              # 舊設定：1 秒間隔 (工作比例 45%，稀釋效應不明顯)
-ITERATION_INTERVAL = 5              # 改為 5 秒間隔以配合 Grafana 時間窗口 (irate[5s] 捕捉真實峰值 2,437 req/s)
+NUM_ITERATIONS = 20                 # 測試執行的循環次數（預設 1 次）
+# ITERATION_INTERVAL = 1            # 原設定：1 秒間隔（已棄用，導致數據重疊）
+ITERATION_INTERVAL = 5              # 優化後：5 秒間隔（避免數據重疊，配合 irate[5s] 監控）
 
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 LOG_MESSAGES = [
@@ -436,12 +438,79 @@ async def query_test(device_id: str = "device_000"):
                 print(f"❌ 查詢失敗: HTTP {response.status}")
 
 # ==========================================
+# 匯出吞吐量指標
+# ==========================================
+def export_metrics(test_start_time: datetime, test_end_time: datetime):
+    """
+    測試完成後，匯出 Prometheus 吞吐量指標
+
+    Args:
+        test_start_time: 測試開始時間
+        test_end_time: 測試結束時間
+    """
+    print("\n" + "=" * 70)
+    print("  📊 匯出 Prometheus 吞吐量指標")
+    print("=" * 70)
+
+    # 取得 export_throughput_metrics.py 的路徑
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    export_script = os.path.join(
+        project_root, "monitoring", "scripts", "export_throughput_metrics.py"
+    )
+
+    if not os.path.exists(export_script):
+        print(f"⚠️  找不到匯出腳本: {export_script}")
+        return
+
+    # 建立 test_file 資料夾（如果不存在）
+    test_file_dir = os.path.join(project_root, "test_file")
+    os.makedirs(test_file_dir, exist_ok=True)
+
+    # 匯入匯出工具
+    sys.path.insert(0, os.path.join(project_root, "monitoring", "scripts"))
+    try:
+        from export_throughput_metrics import PrometheusExporter
+
+        # 建立 exporter
+        exporter = PrometheusExporter()
+
+        # 產生輸出檔名（包含時間戳記，存放到 test_file 資料夾）
+        timestamp_str = test_start_time.strftime("%Y%m%d_%H%M%S")
+        output_file = os.path.join(
+            test_file_dir, f"throughput_metrics_{timestamp_str}.csv"
+        )
+
+        print(f"⏱️  測試時間範圍:")
+        print(f"   開始: {test_start_time}")
+        print(f"   結束: {test_end_time}")
+        print(f"   輸出: {output_file}")
+        print()
+
+        # 執行匯出
+        exporter.export_throughput_metrics(
+            test_start_time, test_end_time, output_file
+        )
+
+    except ImportError as e:
+        print(f"❌ 無法匯入 export_throughput_metrics: {e}")
+    except Exception as e:
+        print(f"❌ 匯出指標時發生錯誤: {e}")
+    finally:
+        # 移除新增的路徑
+        if sys.path[0] == os.path.join(project_root, "monitoring", "scripts"):
+            sys.path.pop(0)
+
+# ==========================================
 # 主程式
 # ==========================================
 async def main():
     """
     主程式入口
     """
+    # 記錄整體測試開始時間（用於匯出指標）
+    overall_start_time = datetime.now()
+
     # 收集所有測試結果
     all_test_results = []
 
@@ -515,10 +584,11 @@ async def main():
             print(f"  • ⚠️  換算公式有偏差")
 
         print(f"\n💡 Grafana 觀測提示：")
-        print(f"  • 如果使用 rate()[1m]，Grafana 會顯示: ~{measured_avg_qps:.0f} req/s (含稀釋)")
-        print(f"  • 如果使用 irate()[5s]，Grafana 在峰值期間會顯示: ~{corrected_qps:.0f} req/s (真實峰值)")
+        print(f"  • 如果使用 rate[30s]，Grafana 會顯示: ~{measured_avg_qps:.0f} req/s (含稀釋)")
+        print(f"  • 如果使用 irate[5s]，Grafana 在峰值期間會顯示: ~{corrected_qps:.0f} req/s (真實峰值)")
         print(f"  • 兩者差異來自時間稀釋效應: {work_ratio:.0%} 工作時間比例")
-        print(f"  • 5秒間隔設計：讓 irate[5s] 捕捉單次測試峰值，rate[30s] 顯示平均值")
+        print(f"  • {ITERATION_INTERVAL}秒間隔設計：讓 irate[5s] 捕捉單次測試峰值，避免數據重疊")
+        print(f"  • 總循環週期: {total_work_time/NUM_ITERATIONS + ITERATION_INTERVAL:.1f} 秒 (測試 {total_work_time/NUM_ITERATIONS:.1f}s + 間隔 {ITERATION_INTERVAL}s)")
 
         print("=" * 70)
 
@@ -540,6 +610,19 @@ async def main():
                 print(f"  • 按等級統計:")
                 for level, count in stats.get('logs_by_level', {}).items():
                     print(f"    - {level}: {count:,}")
+
+    # ==========================================
+    # 新增：匯出 Prometheus 吞吐量指標
+    # ==========================================
+    overall_end_time = datetime.now()
+
+    print("\n" + "=" * 70)
+    print("⏳ 等待 10 秒讓 Prometheus 收集完整指標...")
+    print("=" * 70)
+    await asyncio.sleep(10)
+
+    # 執行指標匯出
+    export_metrics(overall_start_time, overall_end_time)
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,7 +1,7 @@
 # prometheus.yml
 global:
   scrape_interval: 1s        # 全局預設：每 1 秒抓取一次指標（與 FastAPI 任務保持一致）
-  evaluation_interval: 15s   # 每 15 秒評估一次告警規則
+  evaluation_interval: 5s   # 每 15 秒評估一次告警規則
 
   external_labels:
     cluster: 'log-collection-system'
@@ -24,15 +24,21 @@ scrape_configs:
   # ========================================================================
   # ⚠️  重要：1 秒抓取間隔配置
   # ========================================================================
-  # 目的：捕捉短暫峰值（測試持續時間 ~0.91秒）
+  # 目的：捕捉短暫峰值（測試持續時間 ~0.90秒）
   # 數據完整性驗證：使用 monitoring/scripts/check_scrape_health.sh
   # 效能影響：
   #   - CPU 使用率：~0.3-0.6%（非常低）
   #   - 記憶體使用：~80MB（可接受）
   #   - 抓取耗時：~2-4ms（穩定）
   # 配合 Grafana 使用：
-  #   - irate[15s] 用於瞬時峰值（覆蓋 ~3.8 個測試週期）
-  #   - rate[1m] 用於平均值（含稀釋效應）
+  #   - irate[5s] 用於瞬時峰值（覆蓋 ~2.6 個測試週期，捕捉真實峰值）
+  #   - irate[10s] 用於短期平滑（覆蓋 ~5.3 個測試週期）
+  #   - rate[30s] 用於平均值（含時間稀釋效應，工作比例 47.4%）
+  # 測試配置：
+  #   - 單次測試時間：0.90 秒
+  #   - 循環間隔：5 秒
+  #   - 總循環週期：5.90 秒
+  #   - 工作時間比例：15.3%（優化後，避免數據重疊）
   # ========================================================================
   - job_name: 'fastapi'
     static_configs:
@@ -40,8 +46,8 @@ scrape_configs:
         - 'log-fastapi-1:8000'
         - 'log-fastapi-2:8000'
     metrics_path: '/metrics'
-    # scrape_interval: 5s              # 原設定: 5 秒抓取
-    scrape_interval: 1s              # ✅ 改為 1 秒抓取以捕捉短暫峰值（已驗證穩定）
+    # scrape_interval: 5s              # 原設定: 5 秒抓取（已棄用）
+    scrape_interval: 1s                # 當前設定：1 秒抓取（捕捉 0.9 秒短測試）        
 
   # Redis 監控
   - job_name: 'redis'
