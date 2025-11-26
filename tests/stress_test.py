@@ -42,7 +42,7 @@ BATCH_SIZE = 5                     # 減小批次大小以降低 P95 回應時�
 USE_BATCH_API = True               # 是否使用批量 API（新增）
 
 # 新增：循環測試配置
-NUM_ITERATIONS = 20                 # 測試執行的循環次數（預設 1 次）
+NUM_ITERATIONS = 50               # 測試執行的循環次數（預設 1 次）
 # ITERATION_INTERVAL = 1            # 原設定：1 秒間隔（已棄用，導致數據重疊）
 ITERATION_INTERVAL = 5              # 優化後：5 秒間隔（避免數據重疊，配合 irate[5s] 監控）
 
@@ -932,7 +932,7 @@ async def main():
     timestamp_str = overall_start_time.strftime("%Y%m%d_%H%M%S")
     output_file = os.path.join(test_file_dir, f"stress_test_results_{timestamp_str}.json")
 
-    # 準備完整的測試報告（包含 Prometheus 指標）
+    # 準備完整的測試報告
     test_report = {
         "test_summary": {
             "start_time": overall_start_time.isoformat(),
@@ -941,9 +941,7 @@ async def main():
             "num_iterations": NUM_ITERATIONS,
             "iteration_interval": ITERATION_INTERVAL
         },
-        "iterations": all_test_results,
-        # 新增：Prometheus 指標
-        "prometheus_metrics": prometheus_metrics if prometheus_metrics else {"error": "Prometheus 不可用或查詢失敗"}
+        "iterations": all_test_results
     }
 
     # 匯出 JSON
@@ -953,8 +951,6 @@ async def main():
 
         print(f"✅ 測試結果已匯出至: {output_file}")
         print(f"   包含 {len(all_test_results)} 輪測試結果")
-        if prometheus_metrics:
-            print("   包含 Prometheus 指標數據")
         print("=" * 70)
     except Exception as e:
         print(f"❌ 匯出測試結果時發生錯誤: {e}")

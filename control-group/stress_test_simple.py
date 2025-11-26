@@ -28,7 +28,7 @@ LOGS_PER_DEVICE = 100                # 每台設備發送的日誌數
 CONCURRENT_LIMIT = 200               # 並發限制
 BATCH_SIZE = 5                       # 批次大小
 USE_BATCH_API = True                 # 是否使用批量 API
-NUM_ITERATIONS = 20                 # 測試執行的循環次數
+NUM_ITERATIONS = 50                 # 測試執行的循環次數
 ITERATION_INTERVAL = 5               # 每次循環之間的間隔時間（秒）
 
 # Prometheus 監控配置
@@ -1243,42 +1243,6 @@ async def main():
             print(f"\n⚠️  指標匯出失敗: {e}")
             print("   測試結果不受影響，可手動匯出指標")
 
-    # ==========================================
-    # 新增：查詢 Prometheus 指標並輸出結果
-    # ==========================================
-    prometheus_metrics = None
-    if PROMETHEUS_AVAILABLE:
-        print("\n" + "=" * 70)
-        print("  📊 查詢 Prometheus 指標")
-        print("=" * 70)
-
-        try:
-            querier = PrometheusMetricsQuerier(prometheus_url=PROMETHEUS_URL)
-            if querier.test_connection():
-                print("✅ 連接到 Prometheus 成功")
-                print("⏳ 查詢測試期間的指標...")
-
-                # 查詢測試期間的指標（使用所有測試的時間範圍）
-                prometheus_metrics = querier.query_test_metrics(
-                    start_time=all_test_start,
-                    end_time=all_test_end,
-                    batch_size=BATCH_SIZE
-                )
-
-                # 顯示查詢結果摘要
-                print("\n📈 Prometheus 指標摘要:")
-                print(f"  • QPS (所有端點): 最大 {prometheus_metrics['qps']['max']:.2f} req/s, 平均 {prometheus_metrics['qps']['avg']:.2f} req/s")
-                print(f"  • QPS (批量端點): 最大 {prometheus_metrics['qps_batch']['max']:.2f} req/s, 平均 {prometheus_metrics['qps_batch']['avg']:.2f} req/s")
-                print(f"  • 吞吐量: 最大 {prometheus_metrics['throughput']['max']:.2f} logs/s, 平均 {prometheus_metrics['throughput']['avg']:.2f} logs/s")
-                print(f"  • P95 響應時間: 最大 {prometheus_metrics['p95_response_time']['max']:.2f} ms, 平均 {prometheus_metrics['p95_response_time']['avg']:.2f} ms")
-                print(f"  • P99 響應時間: 最大 {prometheus_metrics['p99_response_time']['max']:.2f} ms, 平均 {prometheus_metrics['p99_response_time']['avg']:.2f} ms")
-                print(f"  • 錯誤率: 最大 {prometheus_metrics['error_rate']['max']:.4f}, 平均 {prometheus_metrics['error_rate']['avg']:.4f}")
-            else:
-                print("⚠️  無法連接到 Prometheus，跳過指標查詢")
-        except Exception as e:
-            print(f"❌ 查詢 Prometheus 指標時發生錯誤: {e}")
-    else:
-        print("\n⚠️  Prometheus 客戶端不可用，跳過指標查詢")
 
     # ==========================================
     # 新增：匯出所有測試結果為 JSON（包含 Prometheus 指標）
@@ -1294,7 +1258,7 @@ async def main():
     timestamp_str = overall_start_time.strftime("%Y%m%d_%H%M%S")
     output_file = TEST_FILE_DIR / f"control_group_stress_test_results_{timestamp_str}.json"
 
-    # 準備完整的測試報告（包含 Prometheus 指標）
+    # 準備完整的測試報告
     test_report = {
         "test_summary": {
             "test_type": "control_group",
@@ -1304,9 +1268,7 @@ async def main():
             "num_iterations": NUM_ITERATIONS,
             "iteration_interval": ITERATION_INTERVAL
         },
-        "iterations": all_test_results,
-        # 新增：Prometheus 指標
-        "prometheus_metrics": prometheus_metrics if prometheus_metrics else {"error": "Prometheus 不可用或查詢失敗"}
+        "iterations": all_test_results
     }
 
     # 匯出 JSON
@@ -1316,8 +1278,6 @@ async def main():
 
         print(f"✅ 測試結果已匯出至: {output_file}")
         print(f"   包含 {len(all_test_results)} 輪測試結果")
-        if prometheus_metrics:
-            print("   包含 Prometheus 指標數據")
         print("=" * 70)
     except Exception as e:
         print(f"❌ 匯出測試結果時發生錯誤: {e}")
