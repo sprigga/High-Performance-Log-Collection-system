@@ -346,7 +346,7 @@ end note
 
 ### Core Features
 
-- ✅ **High Throughput**: Supports 24,600+ logs/second (measured average)
+- ✅ **High Throughput**: Supports 10,000+ logs/second (measured average)
 - ✅ **Low Latency**: API response time P95 < 60ms (actual average from tests)
 - ✅ **Asynchronous Processing**: Returns immediately after writing to Redis
 - ✅ **Batch Optimization**: Batch writing to the database improves performance
