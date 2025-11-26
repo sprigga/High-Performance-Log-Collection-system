@@ -1150,7 +1150,13 @@ csv_content = """timestamp,logs_per_second_30s (每秒日誌數 (logs/s) - 30s �
 2025-11-25 08:59:59,0.0,0.0,1.9990009990009991,0.0,0.0
 """
 
-output_file_path = "filtered_throughput.csv"
+from pathlib import Path
+
+# 獲取當前腳本所在目錄的根目錄
+script_dir = Path(__file__).parent
+test_file_dir = script_dir / "test_file"
+test_file_dir.mkdir(parents=True, exist_ok=True)  # 確保目錄存在
+output_file_path = test_file_dir / "filtered_throughput.csv"
 
 # Use io.StringIO to treat the string as a file
 csvfile = io.StringIO(csv_content)
@@ -1182,7 +1188,7 @@ with open(output_file_path, 'w', newline='') as outfile:
     writer = csv.writer(outfile)
     writer.writerows(filtered_rows)
 
-print(f"Filtered data written to: {output_file_path}")
+print(f"Filtered data written to: {str(output_file_path)}")
 
 # Optionally, print the filtered data to stdout as well
 print("\n--- Filtered Data (logs per second 30s > 6000) ---")

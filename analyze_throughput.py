@@ -5,7 +5,16 @@ high_throughput_data = []
 row_count = 0
 skipped_rows = 0
 
-with open('/home/ubuntu/log-collection-system/test_file/throughput_metrics_20251125_090719.csv', 'r', encoding='utf-8-sig') as csvfile:
+# 讀取CSV檔案，處理BOM字符
+import os
+from pathlib import Path
+
+# 獲取當前腳本所在目錄的根目錄
+script_dir = Path(__file__).parent
+test_file_dir = script_dir / "test_file"
+csv_file_path = test_file_dir / "throughput_metrics_20251125_090719.csv"
+
+with open(csv_file_path, 'r', encoding='utf-8-sig') as csvfile:
     # 使用utf-8-sig編碼來自動處理BOM
     reader = csv.DictReader(csvfile)
 

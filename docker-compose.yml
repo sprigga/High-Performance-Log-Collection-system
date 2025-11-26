@@ -169,6 +169,29 @@ services:
       timeout: 3s
       retries: 3
 
+  # ==========================================
+  # PostgreSQL 連線監控服務 - 已移至 docker-compose.monitoring.yml
+  # ==========================================
+  # postgres-monitor:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.postgres-monitor
+  #   container_name: postgres-monitor
+  #   ports:
+  #     - "9188:9188"  # Prometheus metrics 端口
+  #   environment:
+  #     - TZ=Asia/Taipei
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_USER=loguser
+  #     - POSTGRES_PASSWORD=logpass
+  #     - POSTGRES_DB=logsdb
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - log-network
+  #   restart: unless-stopped
+
 # ==========================================
 # 網路配置
 # ==========================================

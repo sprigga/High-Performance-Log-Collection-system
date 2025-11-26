@@ -11,36 +11,36 @@
   "panels": [
     {
       "id": 0,
-      "title": "系統吞吐量 (Throughput) - 主系統高吞吐量監控",
+      "title": "核心效能指標對比 - 主系統 (Redis + Worker 架構)",
       "type": "graph",
       "gridPos": {
         "x": 0,
         "y": 0,
         "w": 24,
-        "h": 10
+        "h": 12
       },
       "targets": [
         {
           "expr": "sum(irate(logs_received_total[5s]))",
-          "legendFormat": "日誌數 (logs/s) - 瞬時峰值",
+          "legendFormat": "1️⃣ 日誌吞吐量 (logs/s)",
           "refId": "A",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(redis_stream_messages_total{status='success'}[5s]))",
-          "legendFormat": "Redis 訊息 (msg/s) - 瞬時峰值",
+          "expr": "sum(irate(http_requests_total[5s]))",
+          "legendFormat": "2️⃣ HTTP QPS (req/s)",
           "refId": "B",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[5s]))",
-          "legendFormat": "PG 插入 (rows/s) - 瞬時峰值",
+          "expr": "sum(irate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[5s])) or sum(rate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[30s]))",
+          "legendFormat": "3️⃣ PG 插入速率 (rows/s)",
           "refId": "C",
           "interval": "1s"
         },
         {
-          "expr": "sum(irate(http_requests_total[5s]))",
-          "legendFormat": "HTTP 請求 (req/s) - 瞬時峰值",
+          "expr": "sum(irate(redis_stream_messages_total{status='success'}[5s]))",
+          "legendFormat": "Redis 訊息 (msg/s) - 架構特有",
           "refId": "D",
           "interval": "1s"
         }
@@ -88,25 +88,25 @@
       },
       "seriesOverrides": [
         {
-          "alias": "日誌數 (logs/s)",
+          "alias": "1️⃣ 日誌吞吐量 (logs/s)",
           "color": "#73BF69",
           "linewidth": 3,
           "zindex": 3
         },
         {
-          "alias": "Redis 訊息 (msg/s)",
+          "alias": "2️⃣ HTTP QPS (req/s)",
           "color": "#F2495C",
-          "linewidth": 2,
+          "linewidth": 3,
           "zindex": 2
         },
         {
-          "alias": "PG 插入 (rows/s)",
+          "alias": "3️⃣ PG 插入速率 (rows/s)",
           "color": "#5794F2",
-          "linewidth": 2,
+          "linewidth": 3,
           "zindex": 1
         },
         {
-          "alias": "HTTP 請求 (req/s)",
+          "alias": "Redis 訊息 (msg/s) - 架構特有",
           "color": "#B877D9",
           "linewidth": 2,
           "zindex": 0,
@@ -119,16 +119,16 @@
         "sort": 2,
         "value_type": "individual"
       },
-      "description": "主系統吞吐量監控（完整版 - 包含 Nginx、連接池、Redis、Worker）：\n\n📊 實測數據參考（目標：10,000+ logs/秒）：\n• 吞吐量: 目標 > 10,000 logs/秒\n• 批量處理: 使用 Redis Stream 非同步處理\n• Worker 並發: 多 Worker 平行處理提升效能\n\n⏱️ 時間窗口優化（針對 0.9 秒短測試）：\n• irate[5s] - 捕捉瞬時峰值（覆蓋 ~2.6 個測試週期）\n• 測試配置：單次 0.9s，循環間隔 5s，總週期 5.9s\n• 工作時間比例：15.3%（避免數據重疊）\n\n圖表說明：\n• 日誌數 - 實際接收的日誌數量（主要目標指標）- 綠色粗線\n• Redis 訊息 - Redis Stream 非同步訊息處理速率 - 紅色線\n• PG 插入 - PostgreSQL 實際插入速率 - 藍色線\n• HTTP 請求 - 批量 API 請求數 - 紫色虛線\n\n🎯 主系統預期吞吐量: 10,000+ logs/秒（vs 對照組 300-500 logs/秒）\n📈 效能提升目標: 20-30 倍\n💡 實測峰值：QPS 2,225 req/s，吞吐量 11,127 logs/s"
+      "description": "【效能比較 - 核心指標】主系統 (Redis + Worker 架構)\n\n📊 三大核心比較指標:\n1️⃣ 日誌吞吐量 (logs/s) - 系統處理能力的直接體現\n2️⃣ HTTP QPS (req/s) - API 請求處理效率\n3️⃣ PG 插入速率 (rows/s) - 資料持久化能力\n\n🎯 主系統目標值:\n• 吞吐量: > 10,000 logs/秒\n• QPS: > 2,000 req/s\n• 效能提升: 20-30x vs 對照組\n\n⏱️ 監控配置:\n• 時間窗口: irate[5s] - 捕捉瞬時峰值\n• 採樣間隔: 1s - 高解析度\n• 測試週期: 0.9s 工作 + 5s 間隔\n\n🏗️ 架構特點:\n• Nginx 負載平衡\n• PostgreSQL 連接池\n• Redis Stream 非同步佇列\n• 多 Worker 並行處理\n\n💡 實測峰值: QPS 2,225 req/s, 吞吐量 11,127 logs/s\n📈 換算公式: 吞吐量 ≈ QPS × batch_size"
     },
     {
       "id": 4,
       "title": "Redis 快取命中率",
       "type": "graph",
       "gridPos": {
-        "x": 12,
-        "y": 16,
-        "w": 12,
+        "x": 0,
+        "y": 12,
+        "w": 24,
         "h": 8
       },
       "targets": [
@@ -180,9 +180,9 @@
       "type": "graph",
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 20,
         "w": 12,
-        "h": 8
+        "h": 10
       },
       "targets": [
         {
@@ -236,9 +236,9 @@
       "type": "graph",
       "gridPos": {
         "x": 12,
-        "y": 24,
+        "y": 20,
         "w": 12,
-        "h": 8
+        "h": 10
       },
       "targets": [
         {
@@ -287,9 +287,9 @@
       "type": "graph",
       "gridPos": {
         "x": 0,
-        "y": 40,
+        "y": 30,
         "w": 24,
-        "h": 8
+        "h": 10
       },
       "targets": [
         {

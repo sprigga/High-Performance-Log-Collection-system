@@ -11,7 +11,7 @@
   "panels": [
     {
       "id": 0,
-      "title": "系統吞吐量 (Throughput) - 對照組低吞吐量監控",
+      "title": "核心效能指標對比 - 對照組 (簡化架構)",
       "type": "graph",
       "gridPos": {
         "x": 0,
@@ -21,22 +21,22 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(logs_received_total[30s]))",
-          "legendFormat": "日誌數 (logs/s) - 30s 平均",
+          "expr": "sum(irate(logs_received_total[5s])) or sum(rate(logs_received_total[30s]))",
+          "legendFormat": "1️⃣ 日誌吞吐量 (logs/s)",
           "refId": "A",
-          "interval": "10s"
+          "interval": "1s"
         },
         {
-          "expr": "sum(rate(http_requests_total[30s]))",
-          "legendFormat": "HTTP 請求 (req/s) - 30s 平均",
+          "expr": "sum(irate(http_requests_total[5s])) or sum(rate(http_requests_total[30s]))",
+          "legendFormat": "2️⃣ HTTP QPS (req/s)",
           "refId": "B",
-          "interval": "10s"
+          "interval": "1s"
         },
         {
-          "expr": "sum(rate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[30s]))",
-          "legendFormat": "PG 插入 (rows/s) - 30s 平均",
+          "expr": "sum(irate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[5s])) or sum(rate(pg_stat_database_tup_inserted{datname=\"logsdb\"}[30s]))",
+          "legendFormat": "3️⃣ PG 插入速率 (rows/s)",
           "refId": "C",
-          "interval": "10s"
+          "interval": "1s"
         }
       ],
       "yaxes": [
@@ -82,32 +82,31 @@
       },
       "seriesOverrides": [
         {
-          "alias": "日誌數 (logs/s) - 30s 平均",
+          "alias": "1️⃣ 日誌吞吐量 (logs/s)",
           "color": "#73BF69",
           "linewidth": 3,
           "zindex": 3
         },
         {
-          "alias": "HTTP 請求 (req/s) - 30s 平均",
-          "color": "#B877D9",
-          "linewidth": 2,
-          "zindex": 2,
-          "dashes": true
+          "alias": "2️⃣ HTTP QPS (req/s)",
+          "color": "#F2495C",
+          "linewidth": 3,
+          "zindex": 2
         },
         {
-          "alias": "PG 插入 (rows/s) - 30s 平均",
+          "alias": "3️⃣ PG 插入速率 (rows/s)",
           "color": "#5794F2",
-          "linewidth": 2,
+          "linewidth": 3,
           "zindex": 1
         }
       ],
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "tooltip": {
         "shared": true,
         "sort": 2,
         "value_type": "individual"
       },
-      "description": "對照組系統吞吐量監控（簡化版 - 無 Nginx、連接池、Redis、Worker）：\n\n📊 實測數據參考（100 設備 × 100 日誌 = 10,000 筆）：\n• 吞吐量: ~382 logs/秒\n• 總耗時: ~26 秒\n• 批量請求數: 2,000 (batch_size=5)\n\n⏱️ 時間窗口優化（針對 26 秒長測試）：\n• rate[30s] - 捕捉 26 秒測試的完整峰值\n• 測試配置：單次 26s\n• interval: 1s - 提供高解析度數據採集\n\n圖表說明：\n• 日誌數 - 實際接收的日誌數量（主要目標指標）- 綠色粗線\n• HTTP 請求 - 批量 API 請求數 - 紫色虛線\n• PG 插入 - PostgreSQL 實際插入速率 - 藍色線\n\n⚠️ 對照組預期吞吐量: 300-500 logs/秒（vs 主系統目標 10,000+ logs/秒）"
+      "description": "【效能比較 - 核心指標】對照組 (簡化架構)\n\n📊 三大核心比較指標:\n1️⃣ 日誌吞吐量 (logs/s) - 系統處理能力的直接體現\n2️⃣ HTTP QPS (req/s) - API 請求處理效率\n3️⃣ PG 插入速率 (rows/s) - 資料持久化能力\n\n🎯 對照組實測值:\n• 吞吐量: ~365 logs/秒\n• QPS: ~73 req/s\n• 與主系統差距: 20-30x\n\n⏱️ 監控配置 (已優化):\n• 優先使用 irate[5s] 捕捉瞬時峰值\n• 備援使用 rate[30s] 顯示歷史平均\n• 採樣間隔: 1s - 高解析度\n• 測試週期: ~27s 單次執行 + 5s 間隔\n\n🏗️ 架構特點:\n• 無負載平衡 (直連 API)\n• 無連接池優化\n• 無 Redis 緩衝\n• 無 Worker 並行處理\n• 同步直寫 PostgreSQL\n\n💡 實測峰值: QPS 73 req/s, 吞吐量 365 logs/s\n📈 換算公式: 吞吐量 ≈ QPS × batch_size\n\n⚠️ 使用提示:\n• 測試進行時: 顯示 irate[5s] 瞬時峰值\n• 測試間隔時: 自動切換到 rate[30s] 平均值\n• 查看歷史數據: 調整時間範圍到測試時段"
     },
     {
       "id": 1,
@@ -177,7 +176,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "null",
+      "nullPointMode": "connected",
       "description": "QPS 量測說明（優化版 - 針對 26.76 秒長測試）：\n• rate 30s - 捕捉 26.76 秒測試的完整峰值（真實峰值 ~74.7 req/s）\n• rate 1m - 1分鐘平滑曲線（減少抖動）\n\n⏱️ 測試配置：\n• 單次測試時間：26.76 秒\n• 循環間隔：5 秒\n• 總循環週期：31.76 秒\n• 工作時間比例：84.3%\n\n📊 實測數據參考：\n• 批量請求總數：2,000 次\n• 平均 QPS：~74.7 req/s (2000 ÷ 26.76)\n• 總日誌數：10,000 筆\n• Batch size：5 logs/request\n\n💡 觀察建議：\n• 長時間壓測建議觀察 rate 30s 曲線以捕捉真實峰值\n• 成功/錯誤請求可驗證系統穩定性\n\n⚠️ 注意：此為批量 API 的請求數，非實際日誌數\n實際吞吐量 = QPS × batch_size (例: 74.7 × 5 = 373.5 logs/s)"
     },
     {
@@ -239,7 +238,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "null"
+      "nullPointMode": "connected"
     },
     {
       "id": 5,
@@ -291,7 +290,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "null"
+      "nullPointMode": "connected"
     },
     {
       "id": 9,
@@ -342,7 +341,7 @@
         "total": false,
         "avg": true
       },
-      "nullPointMode": "null"
+      "nullPointMode": "connected"
     }
   ],
   "editable": true,

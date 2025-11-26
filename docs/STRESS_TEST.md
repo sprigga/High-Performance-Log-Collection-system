@@ -936,6 +936,18 @@ CONCURRENT_LIMIT = 200   # 平衡吞吐量與穩定性
 
 ---
 
+## CSV 匯出路徑
+
+壓力測試產生的效能指標會透過相關監控腳本匯出至 CSV 檔案，存放於專案的 `test_file` 目錄：
+
+- **預設匯出路徑**：`/home/ubuntu/log-collection-system/test_file/`
+- **主要輸出檔**：
+  - `monitoring_throughput_metrics.csv` - 系統吞吐量指標
+  - `monitoring_throughput_http_qps_top20.csv` - HTTP QPS 前 20 筆篩選資料
+  - `http_qps_top20.csv` - HTTP QPS 最高 20 筆資料
+
+---
+
 ## 總結
 
 此壓力測試腳本提供了：
