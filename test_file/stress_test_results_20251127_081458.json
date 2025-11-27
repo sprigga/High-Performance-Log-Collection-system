@@ -1,0 +1,2861 @@
+{
+  "test_summary": {
+    "start_time": "2025-11-27T08:14:58.307764",
+    "end_time": "2025-11-27T08:19:40.586652",
+    "total_duration": 282.28,
+    "num_iterations": 50,
+    "iteration_interval": 5
+  },
+  "iterations": [
+    {
+      "iteration": 1,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:14:58.654190",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.35
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5786.54,
+        "throughput": 28932.68,
+        "avg_response_time": 15.7,
+        "min_response_time": 1.06,
+        "max_response_time": 72.84
+      },
+      "percentiles": {
+        "p50": 12.81,
+        "p95": 49.9,
+        "p99": 61.87
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 28932.68,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 49.9,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 2,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:04.021011",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5490.93,
+        "throughput": 27454.65,
+        "avg_response_time": 14.37,
+        "min_response_time": 1.17,
+        "max_response_time": 133.41
+      },
+      "percentiles": {
+        "p50": 11.74,
+        "p95": 33.93,
+        "p99": 86.84
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27454.65,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 33.93,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 3,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:09.513392",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.49
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4087.01,
+        "throughput": 20435.07,
+        "avg_response_time": 20.43,
+        "min_response_time": 1.12,
+        "max_response_time": 152.07
+      },
+      "percentiles": {
+        "p50": 12.89,
+        "p95": 86.34,
+        "p99": 140.44
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 20435.07,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 86.34,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 4,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:14.878274",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5532.44,
+        "throughput": 27662.21,
+        "avg_response_time": 15.42,
+        "min_response_time": 1.83,
+        "max_response_time": 86.02
+      },
+      "percentiles": {
+        "p50": 12.19,
+        "p95": 45.67,
+        "p99": 73.56
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27662.21,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 45.67,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 5,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:20.324285",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.44
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4549.48,
+        "throughput": 22747.4,
+        "avg_response_time": 19.27,
+        "min_response_time": 2.03,
+        "max_response_time": 155.24
+      },
+      "percentiles": {
+        "p50": 14.26,
+        "p95": 52.86,
+        "p99": 60.34
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 22747.4,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 52.86,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 6,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:25.840778",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.51
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3900.65,
+        "throughput": 19503.25,
+        "avg_response_time": 22.47,
+        "min_response_time": 1.26,
+        "max_response_time": 225.87
+      },
+      "percentiles": {
+        "p50": 17.21,
+        "p95": 68.25,
+        "p99": 84.52
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 19503.25,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 68.25,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 7,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:31.592124",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.75
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 2675.59,
+        "throughput": 13377.93,
+        "avg_response_time": 30.43,
+        "min_response_time": 1.8,
+        "max_response_time": 167.09
+      },
+      "percentiles": {
+        "p50": 23.31,
+        "p95": 103.72,
+        "p99": 158.7
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 13377.93,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 103.72,
+          "achieved": false
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 8,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:36.976135",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.38
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5261.07,
+        "throughput": 26305.35,
+        "avg_response_time": 16.74,
+        "min_response_time": 1.42,
+        "max_response_time": 67.65
+      },
+      "percentiles": {
+        "p50": 13.97,
+        "p95": 40.21,
+        "p99": 59.76
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 26305.35,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 40.21,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 9,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:42.504623",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.52
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3812.1,
+        "throughput": 19060.48,
+        "avg_response_time": 23.56,
+        "min_response_time": 1.33,
+        "max_response_time": 145.71
+      },
+      "percentiles": {
+        "p50": 15.92,
+        "p95": 67.66,
+        "p99": 133.08
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 19060.48,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 67.66,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 10,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:47.868818",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5591.09,
+        "throughput": 27955.45,
+        "avg_response_time": 14.85,
+        "min_response_time": 1.33,
+        "max_response_time": 73.47
+      },
+      "percentiles": {
+        "p50": 12.36,
+        "p95": 40.14,
+        "p99": 66.17
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27955.45,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 40.14,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 11,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:53.281955",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.41
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4885.81,
+        "throughput": 24429.05,
+        "avg_response_time": 15.96,
+        "min_response_time": 1.17,
+        "max_response_time": 161.06
+      },
+      "percentiles": {
+        "p50": 11.72,
+        "p95": 60.66,
+        "p99": 91.47
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 24429.05,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 60.66,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 12,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:15:58.650301",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5497.81,
+        "throughput": 27489.05,
+        "avg_response_time": 15.5,
+        "min_response_time": 1.3,
+        "max_response_time": 99.68
+      },
+      "percentiles": {
+        "p50": 12.31,
+        "p95": 34.56,
+        "p99": 92.46
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27489.05,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 34.56,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 13,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:04.013322",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5565.42,
+        "throughput": 27827.1,
+        "avg_response_time": 14.34,
+        "min_response_time": 1.26,
+        "max_response_time": 153.62
+      },
+      "percentiles": {
+        "p50": 11.12,
+        "p95": 40.92,
+        "p99": 63.18
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27827.1,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 40.92,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 14,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:09.356420",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.34
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5893.48,
+        "throughput": 29467.4,
+        "avg_response_time": 14.76,
+        "min_response_time": 1.08,
+        "max_response_time": 93.55
+      },
+      "percentiles": {
+        "p50": 11.42,
+        "p95": 50.52,
+        "p99": 63.91
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 29467.4,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 50.52,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 15,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:14.733979",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.37
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5350.64,
+        "throughput": 26753.19,
+        "avg_response_time": 14.62,
+        "min_response_time": 1.24,
+        "max_response_time": 88.25
+      },
+      "percentiles": {
+        "p50": 11.83,
+        "p95": 43.56,
+        "p99": 83.85
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 26753.19,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 43.56,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 16,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:20.140258",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.4
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4988.0,
+        "throughput": 24940.01,
+        "avg_response_time": 18.19,
+        "min_response_time": 1.18,
+        "max_response_time": 98.93
+      },
+      "percentiles": {
+        "p50": 14.77,
+        "p95": 48.35,
+        "p99": 58.28
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 24940.01,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 48.35,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 17,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:25.635812",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.49
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4071.22,
+        "throughput": 20356.11,
+        "avg_response_time": 21.86,
+        "min_response_time": 1.19,
+        "max_response_time": 160.73
+      },
+      "percentiles": {
+        "p50": 13.34,
+        "p95": 82.46,
+        "p99": 148.26
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 20356.11,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 82.46,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 18,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:31.013699",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.37
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5344.02,
+        "throughput": 26720.11,
+        "avg_response_time": 16.34,
+        "min_response_time": 1.11,
+        "max_response_time": 97.43
+      },
+      "percentiles": {
+        "p50": 13.01,
+        "p95": 42.31,
+        "p99": 90.02
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 26720.11,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 42.31,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 19,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:36.428197",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.41
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4877.26,
+        "throughput": 24386.31,
+        "avg_response_time": 18.34,
+        "min_response_time": 1.49,
+        "max_response_time": 106.67
+      },
+      "percentiles": {
+        "p50": 14.63,
+        "p95": 64.44,
+        "p99": 95.72
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 24386.31,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 64.44,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 20,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:42.016692",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.58
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3420.28,
+        "throughput": 17101.38,
+        "avg_response_time": 25.09,
+        "min_response_time": 2.24,
+        "max_response_time": 154.82
+      },
+      "percentiles": {
+        "p50": 16.41,
+        "p95": 80.9,
+        "p99": 99.82
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 17101.38,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 80.9,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 21,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:47.385442",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5512.35,
+        "throughput": 27561.74,
+        "avg_response_time": 15.98,
+        "min_response_time": 1.18,
+        "max_response_time": 104.77
+      },
+      "percentiles": {
+        "p50": 12.86,
+        "p95": 56.53,
+        "p99": 78.06
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27561.74,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 56.53,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 22,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:52.823660",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.43
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4609.72,
+        "throughput": 23048.59,
+        "avg_response_time": 17.59,
+        "min_response_time": 1.24,
+        "max_response_time": 100.73
+      },
+      "percentiles": {
+        "p50": 12.41,
+        "p95": 54.03,
+        "p99": 93.9
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 23048.59,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 54.03,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 23,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:16:58.312432",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.48
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4129.38,
+        "throughput": 20646.92,
+        "avg_response_time": 22.01,
+        "min_response_time": 1.5,
+        "max_response_time": 119.41
+      },
+      "percentiles": {
+        "p50": 16.4,
+        "p95": 71.72,
+        "p99": 106.51
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 20646.92,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 71.72,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 24,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:03.661712",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.35
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5793.39,
+        "throughput": 28966.97,
+        "avg_response_time": 15.41,
+        "min_response_time": 1.5,
+        "max_response_time": 81.67
+      },
+      "percentiles": {
+        "p50": 12.58,
+        "p95": 42.64,
+        "p99": 68.83
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 28966.97,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 42.64,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 25,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:09.175075",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.51
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3959.1,
+        "throughput": 19795.51,
+        "avg_response_time": 21.64,
+        "min_response_time": 1.25,
+        "max_response_time": 171.58
+      },
+      "percentiles": {
+        "p50": 13.88,
+        "p95": 89.6,
+        "p99": 143.67
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 19795.51,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 89.6,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 26,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:14.689485",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.51
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3921.33,
+        "throughput": 19606.65,
+        "avg_response_time": 20.6,
+        "min_response_time": 1.19,
+        "max_response_time": 126.52
+      },
+      "percentiles": {
+        "p50": 12.99,
+        "p95": 70.19,
+        "p99": 96.52
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 19606.65,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 70.19,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 27,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:20.155394",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.46
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4336.79,
+        "throughput": 21683.93,
+        "avg_response_time": 20.47,
+        "min_response_time": 1.76,
+        "max_response_time": 111.27
+      },
+      "percentiles": {
+        "p50": 15.77,
+        "p95": 61.94,
+        "p99": 101.98
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21683.93,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 61.94,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 28,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:25.529549",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.37
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5405.8,
+        "throughput": 27028.99,
+        "avg_response_time": 14.82,
+        "min_response_time": 1.18,
+        "max_response_time": 73.48
+      },
+      "percentiles": {
+        "p50": 11.19,
+        "p95": 44.43,
+        "p99": 65.38
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27028.99,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 44.43,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 29,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:30.906441",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.37
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5370.83,
+        "throughput": 26854.15,
+        "avg_response_time": 16.69,
+        "min_response_time": 1.32,
+        "max_response_time": 108.31
+      },
+      "percentiles": {
+        "p50": 13.03,
+        "p95": 55.71,
+        "p99": 93.76
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 26854.15,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 55.71,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 30,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:36.328375",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.42
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4783.93,
+        "throughput": 23919.65,
+        "avg_response_time": 18.08,
+        "min_response_time": 1.35,
+        "max_response_time": 127.37
+      },
+      "percentiles": {
+        "p50": 13.32,
+        "p95": 45.77,
+        "p99": 111.96
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 23919.65,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 45.77,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 31,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:41.803003",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.47
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4263.88,
+        "throughput": 21319.42,
+        "avg_response_time": 19.39,
+        "min_response_time": 1.35,
+        "max_response_time": 138.3
+      },
+      "percentiles": {
+        "p50": 11.92,
+        "p95": 94.74,
+        "p99": 124.27
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21319.42,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 94.74,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 32,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:47.217891",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.41
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4873.67,
+        "throughput": 24368.37,
+        "avg_response_time": 18.1,
+        "min_response_time": 2.35,
+        "max_response_time": 65.61
+      },
+      "percentiles": {
+        "p50": 14.84,
+        "p95": 38.33,
+        "p99": 58.31
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 24368.37,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 38.33,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 33,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:52.684694",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.46
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4341.43,
+        "throughput": 21707.14,
+        "avg_response_time": 17.7,
+        "min_response_time": 1.36,
+        "max_response_time": 125.34
+      },
+      "percentiles": {
+        "p50": 12.78,
+        "p95": 71.48,
+        "p99": 106.51
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21707.14,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 71.48,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 34,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:17:58.082878",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.39
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5074.35,
+        "throughput": 25371.77,
+        "avg_response_time": 16.37,
+        "min_response_time": 1.32,
+        "max_response_time": 99.31
+      },
+      "percentiles": {
+        "p50": 13.24,
+        "p95": 44.73,
+        "p99": 73.43
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 25371.77,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 44.73,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 35,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:03.523750",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.44
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4584.85,
+        "throughput": 22924.27,
+        "avg_response_time": 19.12,
+        "min_response_time": 1.4,
+        "max_response_time": 145.21
+      },
+      "percentiles": {
+        "p50": 12.22,
+        "p95": 91.57,
+        "p99": 130.59
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 22924.27,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 91.57,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 36,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:08.914544",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.39
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5180.18,
+        "throughput": 25900.9,
+        "avg_response_time": 16.52,
+        "min_response_time": 1.32,
+        "max_response_time": 113.09
+      },
+      "percentiles": {
+        "p50": 13.04,
+        "p95": 52.58,
+        "p99": 96.64
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 25900.9,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 52.58,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 37,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:14.283627",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5483.21,
+        "throughput": 27416.03,
+        "avg_response_time": 15.66,
+        "min_response_time": 1.18,
+        "max_response_time": 93.86
+      },
+      "percentiles": {
+        "p50": 12.97,
+        "p95": 35.83,
+        "p99": 61.76
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27416.03,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 35.83,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 38,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:19.643372",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5624.44,
+        "throughput": 28122.19,
+        "avg_response_time": 15.07,
+        "min_response_time": 1.25,
+        "max_response_time": 108.93
+      },
+      "percentiles": {
+        "p50": 12.06,
+        "p95": 45.67,
+        "p99": 81.12
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 28122.19,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 45.67,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 39,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:24.999746",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.35
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5679.46,
+        "throughput": 28397.32,
+        "avg_response_time": 14.31,
+        "min_response_time": 1.21,
+        "max_response_time": 74.11
+      },
+      "percentiles": {
+        "p50": 10.9,
+        "p95": 49.82,
+        "p99": 64.27
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 28397.32,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 49.82,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 40,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:30.549899",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.54
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 3675.03,
+        "throughput": 18375.16,
+        "avg_response_time": 23.48,
+        "min_response_time": 1.19,
+        "max_response_time": 123.67
+      },
+      "percentiles": {
+        "p50": 17.12,
+        "p95": 102.37,
+        "p99": 115.31
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 18375.16,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 102.37,
+          "achieved": false
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 41,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:35.962132",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.41
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4902.23,
+        "throughput": 24511.17,
+        "avg_response_time": 17.89,
+        "min_response_time": 1.42,
+        "max_response_time": 90.83
+      },
+      "percentiles": {
+        "p50": 14.69,
+        "p95": 51.42,
+        "p99": 72.62
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 24511.17,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 51.42,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 42,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:41.429203",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.46
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4330.12,
+        "throughput": 21650.59,
+        "avg_response_time": 20.67,
+        "min_response_time": 2.11,
+        "max_response_time": 127.92
+      },
+      "percentiles": {
+        "p50": 14.59,
+        "p95": 82.56,
+        "p99": 113.48
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21650.59,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 82.56,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 43,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:46.892385",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.46
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4358.26,
+        "throughput": 21791.32,
+        "avg_response_time": 18.06,
+        "min_response_time": 1.29,
+        "max_response_time": 157.72
+      },
+      "percentiles": {
+        "p50": 11.66,
+        "p95": 60.76,
+        "p99": 125.62
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21791.32,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 60.76,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 44,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:52.342617",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.44
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4533.9,
+        "throughput": 22669.48,
+        "avg_response_time": 19.75,
+        "min_response_time": 1.22,
+        "max_response_time": 109.9
+      },
+      "percentiles": {
+        "p50": 14.33,
+        "p95": 68.52,
+        "p99": 103.97
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 22669.48,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 68.52,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 45,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:18:57.710283",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.36
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 5501.53,
+        "throughput": 27507.66,
+        "avg_response_time": 16.57,
+        "min_response_time": 1.87,
+        "max_response_time": 110.72
+      },
+      "percentiles": {
+        "p50": 12.58,
+        "p95": 41.08,
+        "p99": 96.83
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 27507.66,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 41.08,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 46,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:19:03.224399",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.49
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4056.96,
+        "throughput": 20284.8,
+        "avg_response_time": 19.85,
+        "min_response_time": 1.16,
+        "max_response_time": 248.77
+      },
+      "percentiles": {
+        "p50": 11.25,
+        "p95": 107.07,
+        "p99": 228.83
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 20284.8,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 107.07,
+          "achieved": false
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 47,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:19:08.695473",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.47
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4282.39,
+        "throughput": 21411.94,
+        "avg_response_time": 20.85,
+        "min_response_time": 1.26,
+        "max_response_time": 104.12
+      },
+      "percentiles": {
+        "p50": 15.55,
+        "p95": 59.9,
+        "p99": 76.18
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 21411.94,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 59.9,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 48,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:19:14.128828",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.43
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4670.41,
+        "throughput": 23352.05,
+        "avg_response_time": 18.22,
+        "min_response_time": 1.42,
+        "max_response_time": 136.9
+      },
+      "percentiles": {
+        "p50": 13.38,
+        "p95": 68.69,
+        "p99": 127.81
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 23352.05,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 68.69,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 49,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:19:19.579629",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.45
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4494.31,
+        "throughput": 22471.56,
+        "avg_response_time": 18.93,
+        "min_response_time": 1.47,
+        "max_response_time": 146.23
+      },
+      "percentiles": {
+        "p50": 13.5,
+        "p95": 49.98,
+        "p99": 65.9
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 22471.56,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 49.98,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    },
+    {
+      "iteration": 50,
+      "total_iterations": 50,
+      "timestamp": "2025-11-27T08:19:25.018085",
+      "config": {
+        "num_devices": 100,
+        "logs_per_device": 100,
+        "total_logs": 10000,
+        "concurrent_limit": 200,
+        "batch_size": 5,
+        "use_batch_api": true,
+        "base_url": "http://localhost:18723"
+      },
+      "timing": {
+        "total_time": 0.43
+      },
+      "requests": {
+        "total_requests": 2000,
+        "successful_requests": 2000,
+        "failed_requests": 0,
+        "success_rate": 100.0
+      },
+      "logs": {
+        "total_logs_sent": 10000,
+        "successful_logs": 10000,
+        "success_rate": 100.0
+      },
+      "performance": {
+        "qps": 4643.87,
+        "throughput": 23219.36,
+        "avg_response_time": 18.5,
+        "min_response_time": 1.12,
+        "max_response_time": 143.43
+      },
+      "percentiles": {
+        "p50": 12.66,
+        "p95": 81.65,
+        "p99": 111.05
+      },
+      "errors": {},
+      "targets": {
+        "throughput": {
+          "target": 10000,
+          "actual": 23219.36,
+          "achieved": true
+        },
+        "p95_response_time": {
+          "target": 100,
+          "actual": 81.65,
+          "achieved": true
+        },
+        "zero_failures": {
+          "achieved": true,
+          "failed_count": 0
+        }
+      }
+    }
+  ]
+}

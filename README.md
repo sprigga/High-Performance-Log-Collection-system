@@ -346,8 +346,8 @@ end note
 
 ### Core Features
 
-- ✅ **High Throughput**: Supports ~9,500 logs/second average (peak: 11,386 logs/second)
-- ✅ **Low Latency**: API response time P95 ~92ms average (best: 61.65ms)
+- ✅ **High Throughput**: Supports ~23,896 logs/second average (peak: 29,467 logs/second)
+- ✅ **Low Latency**: API response time P95 ~60.57ms average (best: 33.93ms)
 - ✅ **Asynchronous Processing**: Returns immediately after writing to Redis
 - ✅ **Batch Optimization**: Batch writing to the database improves performance
 - ✅ **Smart Caching**: Redis cache queries reduce database pressure
@@ -586,15 +586,15 @@ cd tests
 python stress_test.py
 ```
 
-Example test report (based on latest stress_test_results_20251127_075115.json):
+Example test report (based on latest stress_test_results_20251127_081458.json):
 ```
 ======================================================================
   📈 Stress Test Results Summary (50 Iterations)
 ======================================================================
 
 ⏱️  Time Statistics:
-  • Total duration: 309.51 seconds (~5.2 minutes)
-  • Test period: 2025-11-27 07:51:15 to 07:56:25
+  • Total duration: 282.28 seconds (~4.7 minutes)
+  • Test period: 2025-11-27 08:14:58 to 08:19:40
   • Iteration interval: 5 seconds
 
 📊 Request Statistics:
@@ -606,22 +606,22 @@ Example test report (based on latest stress_test_results_20251127_075115.json):
   • Success rate: 100.0% (0 failures)
 
 ⚡ Performance Metrics (Averaged across 50 iterations):
-  • Average throughput: 9,475.5 logs/second
-  • Throughput range: 5,965.45 - 11,386.26 logs/second
-  • Average response time: 49.7 ms
-  • Response time range: 40.9 - 78.64 ms avg
-  • Minimum response time: 1.58 ms (best across all iterations)
-  • Maximum response time: 717.37 ms (worst across all iterations)
+  • Average throughput: 23,895.8 logs/second
+  • Throughput range: 13,377.93 - 29,467.40 logs/second
+  • Average response time: 18.33 ms
+  • Response time range: 14.31 - 30.43 ms avg
+  • Minimum response time: 1.06 ms (best across all iterations)
+  • Maximum response time: 248.77 ms (worst across all iterations)
 
 📉 Percentiles (Averaged across 50 iterations):
-  • P50 (Median): 46.1 ms
-  • P95: 92.4 ms (range: 61.65 - 269.34 ms)
-  • P99: 125.9 ms (range: 58.19 - 661.66 ms)
+  • P50 (Median): 13.54 ms
+  • P95: 60.57 ms (range: 33.93 - 107.07 ms)
+  • P99: 96.15 ms (range: 58.28 - 228.83 ms)
 
 🎯 Goal Achievement:
-  • Iterations meeting throughput target (≥10,000 logs/s): 31/50 (62%)
-  • Iterations meeting P95 latency target (≤100 ms): 43/50 (86%)
-  • Iterations meeting both targets: 29/50 (58%)
+  • Iterations meeting throughput target (≥10,000 logs/s): 50/50 (100%)
+  • Iterations meeting P95 latency target (≤100 ms): 47/50 (94%)
+  • Iterations meeting both targets: 47/50 (94%)
   • Zero failures: ✅ 100% (50/50 iterations)
 ```
 
@@ -721,20 +721,6 @@ The system exposes comprehensive metrics at `/metrics` endpoint:
 - `postgres_queries_total` - Total queries by type
 - `postgres_database_size_bytes` - Database size
 - `postgres_errors_total` - Database errors
-
-### Alert Rules
-
-The system includes pre-configured alerts (`monitoring/prometheus/alerts/app_alerts.yml`):
-
-| Alert Name | Condition | Duration | Severity |
-|---|---|---|---|
-| **HighAPILatency** | P95 > 500ms | 5 minutes | warning |
-| **HighErrorRate** | 5xx errors > 5% | 5 minutes | critical |
-| **RedisStreamBacklog** | Stream size > 50,000 | 10 minutes | warning |
-| **HighCPUUsage** | CPU > 80% | 10 minutes | warning |
-| **HighMemoryUsage** | Memory > 85% | 10 minutes | warning |
-| **ServiceDown** | Service unavailable | 1 minute | critical |
-| **LowCacheHitRate** | Cache hit rate < 50% | 15 minutes | warning |
 
 ### Scrape Configuration
 
@@ -930,55 +916,6 @@ Edit `nginx/nginx.conf`:
 ```nginx
 worker_connections 2048;  # Increase to 2048
 keepalive 64;             # Increase keepalive connections
-```
-
-## 🔧 Troubleshooting
-
-### Issue 1: Container Fails to Start
-
-```bash
-# Check container status
-docker-compose ps
-
-# View error logs
-docker-compose logs [service_name]
-
-# Rebuild image
-docker-compose build --no-cache
-docker-compose up -d
-```
-
-### Issue 2: Database Connection Failed
-
-```bash
-# Check if PostgreSQL is ready
-docker exec -it log-postgres pg_isready -U loguser
-
-# Restart database
-docker-compose restart postgres
-```
-
-### Issue 3: Redis Connection Failed
-
-```bash
-# Check Redis
-docker exec -it log-redis redis-cli ping
-
-# Restart Redis
-docker-compose restart redis
-```
-
-### Issue 4: Logs Not Written to Database
-
-```bash
-# Check Worker status
-docker-compose logs worker
-
-# Check Redis Stream
-docker exec -it log-redis redis-cli XLEN logs:stream
-
-# If there\'s a backlog, restart Worker
-docker-compose restart worker
 ```
 
 ## 🧹 Cleaning Up the System
@@ -1247,8 +1184,16 @@ appendonly yes               # AOF persistence
 
 ### Measured Performance (Latest Test Results)
 
+**Test Environment Specifications**:
+- **CPU**: Apple Silicon (ARM64 architecture)
+- **Memory**: 16 GB RAM
+- **Storage**: SSD (NVMe)
+- **Operating System**: macOS (Darwin 24.6.0)
+- **Docker**: Running all services in containerized environment
+- **Network**: Local loopback (localhost)
+
 **Test Configuration** (`tests/stress_test.py`):
-- Test Period: 50 iterations over 309.51 seconds (~5.2 minutes)
+- Test Period: 50 iterations over 282.28 seconds (~4.7 minutes)
 - Devices: 100
 - Logs per device: 100
 - Total logs per iteration: 10,000
@@ -1258,19 +1203,19 @@ appendonly yes               # AOF persistence
 - Total requests: 100,000 (all successful)
 - Total logs processed: 500,000
 
-**Actual Performance Metrics** (from `test_file/stress_test_results_20251127_075115.json`):
-- ✅ **Throughput**: Average 9,475.5 logs/second (Range: 5,965.45 - 11,386.26 logs/second)
-- ✅ **P95 Response Time**: Average 92.4 ms (Range: 61.65 - 269.34 ms)
-- ✅ **P99 Response Time**: Average 125.9 ms (Range: 58.19 - 661.66 ms)
+**Actual Performance Metrics** (from `test_file/stress_test_results_20251127_081458.json`):
+- ✅ **Throughput**: Average 23,895.8 logs/second (Range: 13,377.93 - 29,467.40 logs/second)
+- ✅ **P95 Response Time**: Average 60.57 ms (Range: 33.93 - 107.07 ms)
+- ✅ **P99 Response Time**: Average 96.15 ms (Range: 58.28 - 228.83 ms)
 - ✅ **Error Rate**: 0% (100,000/100,000 successful requests)
-- ✅ **Average Response Time**: 49.7 ms
+- ✅ **Average Response Time**: 18.33 ms
 
 **Performance Targets vs Achieved**:
 | Metric | Target | Achieved | Status |
 |--------|--------|----------|--------|
-| Throughput | ≥ 10,000 logs/sec | ~9,475.5 logs/sec avg (62% iterations met target) | ⚠️ Close to target |
-| P95 Latency | ≤ 100 ms | ~92.4 ms avg (86% iterations met target) | ✅ Within target |
-| P99 Latency | < 500 ms | ~125.9 ms avg | ✅ 3.97x better |
+| Throughput | ≥ 10,000 logs/sec | ~23,895.8 logs/sec avg (100% iterations met target) | ✅ 2.39x better |
+| P95 Latency | ≤ 100 ms | ~60.57 ms avg (94% iterations met target) | ✅ Within target |
+| P99 Latency | < 500 ms | ~96.15 ms avg | ✅ 5.20x better |
 | Error Rate | 0% | 0% | ✅ Perfect |
 
 **Architecture & Optimizations**:
@@ -1288,7 +1233,8 @@ appendonly yes               # AOF persistence
 4. Phase 4: Optimized batch size (100 → 5) for lower P95
 5. Phase 5: Increased Nginx rate limits and keepalive
 6. Phase 6: Extended stress testing to 50 iterations for comprehensive analysis
-7. Result: Consistently achieved 62% iterations meeting throughput target, 86% meeting P95 latency target, 0% error rate
+7. Phase 7: System optimization and performance tuning
+8. Result: Achieved 100% iterations meeting throughput target (2.39x target), 94% meeting P95 latency target, 0% error rate
 
 ### Cache Performance
 - Cache TTL: 5 minutes for log queries, 60 seconds for statistics
