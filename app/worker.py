@@ -12,6 +12,9 @@ import redis
 from sqlalchemy import text
 from database import SyncSessionLocal, sync_engine
 
+# 匯入 Prometheus 指標模組
+from metrics import redis_operation_duration_seconds
+
 # ==========================================
 # 配置
 # ==========================================
@@ -194,6 +197,8 @@ def worker_loop():
 
     while running:
         try:
+            # 追蹤 XREADGROUP 操作時間
+            start_time = time.time()
             # 從 Redis Stream 批次讀取訊息
             messages = redis_client.xreadgroup(
                 groupname=GROUP_NAME,
@@ -202,6 +207,9 @@ def worker_loop():
                 count=BATCH_SIZE,
                 block=BLOCK_MS
             )
+            # 記錄操作時間
+            duration = time.time() - start_time
+            redis_operation_duration_seconds.labels(operation='xreadgroup').observe(duration)
 
             # 沒有新訊息
             if not messages:
