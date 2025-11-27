@@ -346,12 +346,12 @@ end note
 
 ### Core Features
 
-- ✅ **High Throughput**: Supports 10,000+ logs/second (measured average)
-- ✅ **Low Latency**: API response time P95 < 60ms (actual average from tests)
+- ✅ **High Throughput**: Supports ~9,500 logs/second average (peak: 11,386 logs/second)
+- ✅ **Low Latency**: API response time P95 ~92ms average (best: 61.65ms)
 - ✅ **Asynchronous Processing**: Returns immediately after writing to Redis
 - ✅ **Batch Optimization**: Batch writing to the database improves performance
 - ✅ **Smart Caching**: Redis cache queries reduce database pressure
-- ✅ **Fault Tolerance**: Automatic retries, health checks, 0% error rate
+- ✅ **Fault Tolerance**: Automatic retries, health checks, 0% error rate (100,000 successful requests)
 - ✅ **Comprehensive Monitoring**: Prometheus metrics with Grafana dashboards
 - ✅ **Automated Alerting**: AlertManager with customizable alert rules
 
@@ -586,37 +586,43 @@ cd tests
 python stress_test.py
 ```
 
-Example test report:
+Example test report (based on latest stress_test_results_20251127_075115.json):
 ```
 ======================================================================
-  📈 Test Results
+  📈 Stress Test Results Summary (50 Iterations)
 ======================================================================
 
 ⏱️  Time Statistics:
-  • Total time: 5.23 seconds
+  • Total duration: 309.51 seconds (~5.2 minutes)
+  • Test period: 2025-11-27 07:51:15 to 07:56:25
+  • Iteration interval: 5 seconds
 
 📊 Request Statistics:
-  • Batch requests: 2,000
-  • Total logs: 10,000
-  • Successful logs: 10,000 (100.0%)
-  • Successful requests: 2,000 (100.0%)
-  • Failed requests: 0 (0.0%)
+  • Total iterations: 50
+  • Batch requests per iteration: 2,000
+  • Total logs per iteration: 10,000
+  • Total requests: 100,000 (all successful)
+  • Total logs processed: 500,000
+  • Success rate: 100.0% (0 failures)
 
-⚡ Performance Metrics:
-  • Throughput: 1,912.35 logs/second
-  • Average response time: 3.45 ms
-  • Minimum response time: 1.23 ms
-  • Maximum response time: 45.67 ms
+⚡ Performance Metrics (Averaged across 50 iterations):
+  • Average throughput: 9,475.5 logs/second
+  • Throughput range: 5,965.45 - 11,386.26 logs/second
+  • Average response time: 49.7 ms
+  • Response time range: 40.9 - 78.64 ms avg
+  • Minimum response time: 1.58 ms (best across all iterations)
+  • Maximum response time: 717.37 ms (worst across all iterations)
 
-📉 Percentiles:
-  • P50 (Median): 2.89 ms
-  • P95: 8.12 ms
-  • P99: 15.34 ms
+📉 Percentiles (Averaged across 50 iterations):
+  • P50 (Median): 46.1 ms
+  • P95: 92.4 ms (range: 61.65 - 269.34 ms)
+  • P99: 125.9 ms (range: 58.19 - 661.66 ms)
 
 🎯 Goal Achievement:
-  ✅ Throughput met: 1912.35 >= 10000 logs/second
-  ✅ P95 response time met: 8.12 <= 100 ms
-  ✅ No failed requests
+  • Iterations meeting throughput target (≥10,000 logs/s): 31/50 (62%)
+  • Iterations meeting P95 latency target (≤100 ms): 43/50 (86%)
+  • Iterations meeting both targets: 29/50 (58%)
+  • Zero failures: ✅ 100% (50/50 iterations)
 ```
 
 ## 📊 Monitoring System
@@ -1242,28 +1248,29 @@ appendonly yes               # AOF persistence
 ### Measured Performance (Latest Test Results)
 
 **Test Configuration** (`tests/stress_test.py`):
-- Test Period: 20 iterations over 115.43 seconds
+- Test Period: 50 iterations over 309.51 seconds (~5.2 minutes)
 - Devices: 100
 - Logs per device: 100
 - Total logs per iteration: 10,000
 - Concurrent limit: 200
 - Batch size: 5 logs per request
 - Batch API: Enabled
-- Total requests: 40,000 (all successful)
+- Total requests: 100,000 (all successful)
+- Total logs processed: 500,000
 
-**Actual Performance Metrics** (from `test_file/stress_test_results_20251126_194744.json`):
-- ✅ **Throughput**: Average 24,600 logs/second (Range: 14,384 - 26,952 logs/second)
-- ✅ **P95 Response Time**: Average 57.7 ms (Range: 38.76 - 131.78 ms) - Well below 100ms target
-- ✅ **P99 Response Time**: Average 89.4 ms (Range: 58.19 - 237.76 ms)
-- ✅ **Error Rate**: 0% (40,000/40,000 successful requests)
-- ✅ **Average Response Time**: 18.5 ms
+**Actual Performance Metrics** (from `test_file/stress_test_results_20251127_075115.json`):
+- ✅ **Throughput**: Average 9,475.5 logs/second (Range: 5,965.45 - 11,386.26 logs/second)
+- ✅ **P95 Response Time**: Average 92.4 ms (Range: 61.65 - 269.34 ms)
+- ✅ **P99 Response Time**: Average 125.9 ms (Range: 58.19 - 661.66 ms)
+- ✅ **Error Rate**: 0% (100,000/100,000 successful requests)
+- ✅ **Average Response Time**: 49.7 ms
 
 **Performance Targets vs Achieved**:
 | Metric | Target | Achieved | Status |
 |--------|--------|----------|--------|
-| Throughput | ≥ 10,000 logs/sec | ~24,600 logs/sec | ✅ 2.46x |
-| P95 Latency | ≤ 100 ms | ~57.7 ms avg | ✅ 57% better |
-| P99 Latency | < 500 ms | ~89.4 ms avg | ✅ 5.6x better |
+| Throughput | ≥ 10,000 logs/sec | ~9,475.5 logs/sec avg (62% iterations met target) | ⚠️ Close to target |
+| P95 Latency | ≤ 100 ms | ~92.4 ms avg (86% iterations met target) | ✅ Within target |
+| P99 Latency | < 500 ms | ~125.9 ms avg | ✅ 3.97x better |
 | Error Rate | 0% | 0% | ✅ Perfect |
 
 **Architecture & Optimizations**:
@@ -1280,7 +1287,8 @@ appendonly yes               # AOF persistence
 3. Phase 3: Increased Redis connection pool to 200
 4. Phase 4: Optimized batch size (100 → 5) for lower P95
 5. Phase 5: Increased Nginx rate limits and keepalive
-6. Result: Achieved 2.46x throughput target, P95 latency 57% below target
+6. Phase 6: Extended stress testing to 50 iterations for comprehensive analysis
+7. Result: Consistently achieved 62% iterations meeting throughput target, 86% meeting P95 latency target, 0% error rate
 
 ### Cache Performance
 - Cache TTL: 5 minutes for log queries, 60 seconds for statistics
