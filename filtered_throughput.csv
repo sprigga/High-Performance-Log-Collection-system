@@ -1,1 +1,0 @@
-timestamp,logs_per_second_30s (每秒日誌數 (logs/s) - 30s 平均),logs_per_second_1m (每秒日誌數 (logs/s) - 1m 平滑),requests_per_second (每秒請求數 (req/s) - 批量請求),pg_inserts_per_second (PostgreSQL 每秒插入行數 (rows/s)),redis_messages_per_second (Redis Stream 每秒訊息數 (msg/s))

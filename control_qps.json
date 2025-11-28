@@ -1,1 +1,0 @@
-{"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"http_requests_total","endpoint":"/api/log","instance":"fastapi-simple:8000","job":"fastapi-simple","method":"POST","status":"200"},"value":[1763541009.613,"1"]}]}}

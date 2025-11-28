@@ -52,3 +52,64 @@ htmlcov/
 
 # Claude Code
 .claude/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+*.containerenv
+
+# Docker named volumes (from docker-compose files, should be in .dockerignore or not committed)
+postgres-data/
+redis-data/
+grafana_data/
+prometheus_data/
+alertmanager_data/
+
+# Monitoring artifacts
+*.pid
+*.sock
+*.log.*
+prometheus_multiproc/
+
+# Configuration
+config/local.json
+config/production.json
+
+# Database migration files
+migrations/
+alembic/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local development
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Coverage
+.coverage*
+coverage.xml
+htmlcov/
+
+# PyCharm
+*.iml
+*.iws
+*.pyc
+*.pyo
+__pycache__/
+
+# Package manager
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
